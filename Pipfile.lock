@@ -1,0 +1,25 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "4fcad41f8a699d935448ab4f7d8c5c84b3697f8c733082164e6a93d549b75b01"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.8"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "automata": {
+            "git": "https://github.com/automata-tech/eva_python_sdk.git",
+            "ref": "8070c43c4491ca5437dbd288f300e874e1b386b1"
+        }
+    },
+    "develop": {}
+}
