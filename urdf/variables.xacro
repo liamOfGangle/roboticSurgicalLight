@@ -29,4 +29,9 @@
 	<xacro:property name="l6_l" value="0.104"/>
 	<xacro:property name="l6_w" value="0.056"/>
 	<xacro:property name="l6_d" value="0.056"/>
+	
+	<!-- Lamp variables -->
+	<xacro:property name="lamp_l" value="0.065"/>
+	<xacro:property name="lamp_w" value="0.066"/>
+	<xacro:property name="lamp_d" value="0.066"/>
 </robot>
