@@ -39,7 +39,7 @@
 	<!-- 3rd link -->
 	<link name="link3">
 		<xacro:cylinderInertial m="${m_total*(l3_l/l_total)}" l="${l3_l}" r="${l3_r}"/>
-		<xacro:cylinderGeometry name="link3" l="${l3_l}" r="${l3_r}" XYZ="0 ${-1*l3_r} ${l2_l}" RPY="0 0 0"/>
+		<xacro:cylinderGeometry name="link3" l="${l3_l}" r="${l3_r}" XYZ="${l3_l/2} ${-1*l3_r} 0" RPY="0 ${pi/2} 0"/>
 	</link>
 	
 	<!-- 3rd joint -->
@@ -48,13 +48,13 @@
 		<child link="link4"/>
 		<xacro:jointLimits upper="47" lower="-165"/>
 		<axis xyz="0 1 0"/>
-		<origin xyz="0 0 ${l3_l}" rpy="0 0 0"/>
+		<origin xyz="${l3_l} 0 0" rpy="0 0 0"/>
 	</joint>
 	
 	<!-- 4th link -->
 	<link name="link4">
 		<xacro:cylinderInertial m="${m_total*(l4_l/l_total)}" l="${l4_l}" r="${l4_r}"/>
-		<xacro:cylinderGeometry name="link4" l="${l4_l}" r="${l4_r}" XYZ="0 ${l4_r} ${l4_l/2}" RPY="0 0 0"/>
+		<xacro:cylinderGeometry name="link4" l="${l4_l}" r="${l4_r}" XYZ="${l4_l/2} ${l4_r} 0" RPY="0 ${pi/2} 0"/>
 	</link>
 	
 	<!-- 4th joint -->
@@ -62,14 +62,14 @@
 		<parent link="link4"/>
 		<child link="link5"/>
 		<xacro:jointLimits upper="180" lower="-180"/>
-		<axis xyz="0 0 1"/>
-		<origin xyz="0 0 ${l4_l}" rpy="0 0 0"/>
+		<axis xyz="1 0 0"/>
+		<origin xyz="${l4_l} 0 0" rpy="0 0 0"/>
 	</joint>
 	
 	<!-- 5th link -->
 	<link name="link5">
 		<xacro:cylinderInertial m="${m_total*(l5_l/l_total)}" l="${l5_l}" r="${l5_r}"/>
-		<xacro:cylinderGeometry name="link5" l="${l5_l}" r="${l4_r}" XYZ="0 0 ${l5_l/2}" RPY="0 0 0"/>
+		<xacro:cylinderGeometry name="link5" l="${l5_l}" r="${l4_r}" XYZ="${l5_l/2} 0 0" RPY="0 ${pi/2} 0"/>
 	</link>
 	
 	<!-- 5th joint -->
@@ -78,12 +78,18 @@
 		<child link="link6"/>
 		<xacro:jointLimits upper="11" lower="-159"/>
 		<axis xyz="0 1 0"/>
-		<origin xyz="0 0 ${l5_l}" rpy="0 0 0"/>
+		<origin xyz="${l5_l} 0 0" rpy="0 0 0"/>
 	</joint>
 		
 	<!-- 6th link -->
 	<link name="link6">
 		<xacro:boxInertial m="${m_total*(l6_l/l_total)}" l="${l6_l}" d="${l6_d}" w="${l6_w}"/>
-		<xacro:boxGeometry name="link6" l="${l6_l}" d="${l6_d}" w="${l6_w}" XYZ="0 0 ${l6_l/2}" RPY="0 0 0"/>
-	</link>		
+		<xacro:boxGeometry name="link6" l="${l6_l}" d="${l6_d}" w="${l6_w}" XYZ="${l6_l/2} 0 0" RPY="0 ${pi/2} 0"/>
+	</link>
+	
+	<!-- Lamp -->
+	<!--<material name="yellow"
+	<link name="lamp">
+		<xacro:boxGeometry name="lamp" l="${lamp_l}" d="${lamp_d}" w="${lamp_w}" XYZ=
+	-->
 </robot>

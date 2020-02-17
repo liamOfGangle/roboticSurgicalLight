@@ -69,13 +69,13 @@
       <geometry>
         <cylinder length="0.205" radius="0.028"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 -0.028 0.096"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.1025 -0.028 0"/>
     </visual>
     <collision name="link3Collision">
       <geometry>
         <cylinder length="0.205" radius="0.028"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 -0.028 0.096"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.1025 -0.028 0"/>
     </collision>
   </link>
   <!-- 3rd joint -->
@@ -84,7 +84,7 @@
     <child link="link4"/>
     <limit effort="30" lower="-2.87979326579" upper="0.820304748437" velocity="1.0"/>
     <axis xyz="0 1 0"/>
-    <origin rpy="0 0 0" xyz="0 0 0.205"/>
+    <origin rpy="0 0 0" xyz="0.205 0 0"/>
   </joint>
   <!-- 4th link -->
   <link name="link4">
@@ -96,13 +96,13 @@
       <geometry>
         <cylinder length="0.124" radius="0.028"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0.028 0.062"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.062 0.028 0"/>
     </visual>
     <collision name="link4Collision">
       <geometry>
         <cylinder length="0.124" radius="0.028"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0.028 0.062"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.062 0.028 0"/>
     </collision>
   </link>
   <!-- 4th joint -->
@@ -110,8 +110,8 @@
     <parent link="link4"/>
     <child link="link5"/>
     <limit effort="30" lower="-3.14159265359" upper="3.14159265359" velocity="1.0"/>
-    <axis xyz="0 0 1"/>
-    <origin rpy="0 0 0" xyz="0 0 0.124"/>
+    <axis xyz="1 0 0"/>
+    <origin rpy="0 0 0" xyz="0.124 0 0"/>
   </joint>
   <!-- 5th link -->
   <link name="link5">
@@ -123,13 +123,13 @@
       <geometry>
         <cylinder length="0.167" radius="0.028"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.0835"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.0835 0 0"/>
     </visual>
     <collision name="link5Collision">
       <geometry>
         <cylinder length="0.167" radius="0.028"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.0835"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.0835 0 0"/>
     </collision>
   </link>
   <!-- 5th joint -->
@@ -138,7 +138,7 @@
     <child link="link6"/>
     <limit effort="30" lower="-2.77507351067" upper="0.191986217719" velocity="1.0"/>
     <axis xyz="0 1 0"/>
-    <origin rpy="0 0 0" xyz="0 0 0.167"/>
+    <origin rpy="0 0 0" xyz="0.167 0 0"/>
   </joint>
   <!-- 6th link -->
   <link name="link6">
@@ -150,14 +150,19 @@
       <geometry>
         <box size="0.056 0.056 0.104"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.052"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.052 0 0"/>
     </visual>
     <collision name="link6Collision">
       <geometry>
         <box size="0.056 0.056 0.104"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.052"/>
+      <origin rpy="0 1.57079632679 0" xyz="0.052 0 0"/>
     </collision>
   </link>
+  <!-- Lamp -->
+  <!--<material name="yellow"
+	<link name="lamp">
+		<xacro:boxGeometry name="lamp" l="${lamp_l}" d="${lamp_d}" w="${lamp_w}" XYZ=
+	-->
 </robot>
 
