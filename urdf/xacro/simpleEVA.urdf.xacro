@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Joint angles, link lengths and mass all found from Automata documentation -->
 <robot name="simpleEVA" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<!-- Import variables -->	
 	<xacro:include filename="$(find simple_eva_description)/urdf/variables.xacro"/>
@@ -15,7 +16,7 @@
 	<joint name="joint1" type="revolute">
 		<parent link="link1"/>
 		<child link="link2"/>
-		<xacro:jointLimits upper="179" lower="-179"/>
+		<xacro:jointLimits upper="180" lower="-180"/>
 		<axis xyz="0 0 1"/>
 		<origin xyz="0 0 ${l1_l}" rpy="0 0 0"/>
 	</joint>
@@ -30,7 +31,7 @@
 	<joint name="joint2" type="revolute">
 		<parent link="link2"/>
 		<child link="link3"/>
-		<xacro:jointLimits upper="70" lower="-155"/>
+		<xacro:jointLimits upper="74" lower="-159"/>
 		<axis xyz="0 1 0"/>
 		<origin xyz="0 0 ${l2_l}" rpy="0 0 0"/>
 	</joint>
@@ -45,7 +46,7 @@
 	<joint name="joint3" type="revolute">
 		<parent link="link3"/>
 		<child link="link4"/>
-		<xacro:jointLimits upper="45" lower="-160"/>
+		<xacro:jointLimits upper="47" lower="-165"/>
 		<axis xyz="0 1 0"/>
 		<origin xyz="0 0 ${l3_l}" rpy="0 0 0"/>
 	</joint>
@@ -60,7 +61,7 @@
 	<joint name="joint4" type="revolute">
 		<parent link="link4"/>
 		<child link="link5"/>
-		<xacro:jointLimits upper="179" lower="-179"/>
+		<xacro:jointLimits upper="180" lower="-180"/>
 		<axis xyz="0 0 1"/>
 		<origin xyz="0 0 ${l4_l}" rpy="0 0 0"/>
 	</joint>
@@ -75,7 +76,7 @@
 	<joint name="joint5" type="revolute">
 		<parent link="link5"/>
 		<child link="link6"/>
-		<xacro:jointLimits upper="10" lower="-155"/>
+		<xacro:jointLimits upper="11" lower="-159"/>
 		<axis xyz="0 1 0"/>
 		<origin xyz="0 0 ${l5_l}" rpy="0 0 0"/>
 	</joint>
