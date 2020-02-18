@@ -5,6 +5,22 @@
 <!-- =================================================================================== -->
 <!-- Joint angles, link lengths and mass all found from Automata documentation -->
 <robot name="simpleEVA">
+  <!-- offWhite colour -->
+  <material name="offWhite">
+    <color rgba="0.960784313725 0.960784313725 0.960784313725 1"/>
+  </material>
+  <!-- Black colour -->
+  <material name="black">
+    <color rgba="0.0 0.0 0.0 1"/>
+  </material>
+  <!-- Yellow colour -->
+  <material name="yellow">
+    <color rgba="1.0 1.0 0.0 1"/>
+  </material>
+  <!-- darkGrey colour -->
+  <material name="darkGrey">
+    <color rgba="0.662745098039 0.662745098039 0.662745098039 1"/>
+  </material>
   <!-- 1st link -->
   <link name="link1">
     <inertial>
@@ -16,6 +32,7 @@
         <box size="0.112 0.112 0.187"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0.0935"/>
+      <material name="offWhite"/>
     </visual>
     <collision name="link1Collision">
       <geometry>
@@ -28,9 +45,29 @@
   <joint name="joint1" type="revolute">
     <parent link="link1"/>
     <child link="link2"/>
-    <limit effort="30" lower="-3.14159265359" upper="3.14159265359" velocity="1.0"/>
+    <limit effort="30" lower="-3.12413936107" upper="3.12413936107" velocity="1.0"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0 0 0.187"/>
+  </joint>
+  <!-- "control box" -->
+  <link name="controlBox">
+    <visual name="controlBoxVisual">
+      <geometry>
+        <box size="0.075 0.11 0.078"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.056 0 0.039"/>
+      <material name="darkGrey"/>
+    </visual>
+    <collision name="controlBoxCollision">
+      <geometry>
+        <box size="0.075 0.11 0.078"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.056 0 0.039"/>
+    </collision>
+  </link>
+  <joint name="cBoxToLink1" type="fixed">
+    <parent link="link1"/>
+    <child link="controlBox"/>
   </joint>
   <!-- 2nd link -->
   <link name="link2">
@@ -43,6 +80,7 @@
         <cylinder length="0.096" radius="0.028"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0.028 0.048"/>
+      <material name="offWhite"/>
     </visual>
     <collision name="link2Collision">
       <geometry>
@@ -55,7 +93,7 @@
   <joint name="joint2" type="revolute">
     <parent link="link2"/>
     <child link="link3"/>
-    <limit effort="30" lower="-2.77507351067" upper="1.29154364648" velocity="1.0"/>
+    <limit effort="30" lower="-2.70526034059" upper="1.2217304764" velocity="1.0"/>
     <axis xyz="0 1 0"/>
     <origin rpy="0 0 0" xyz="0 0 0.096"/>
   </joint>
@@ -69,22 +107,23 @@
       <geometry>
         <cylinder length="0.205" radius="0.028"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.1025 -0.028 0"/>
+      <origin rpy="0 0 0" xyz="0 -0.028 0.096"/>
+      <material name="offWhite"/>
     </visual>
     <collision name="link3Collision">
       <geometry>
         <cylinder length="0.205" radius="0.028"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.1025 -0.028 0"/>
+      <origin rpy="0 0 0" xyz="0 -0.028 0.096"/>
     </collision>
   </link>
   <!-- 3rd joint -->
   <joint name="joint3" type="revolute">
     <parent link="link3"/>
     <child link="link4"/>
-    <limit effort="30" lower="-2.87979326579" upper="0.820304748437" velocity="1.0"/>
+    <limit effort="30" lower="-2.79252680319" upper="0.785398163397" velocity="1.0"/>
     <axis xyz="0 1 0"/>
-    <origin rpy="0 0 0" xyz="0.205 0 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.205"/>
   </joint>
   <!-- 4th link -->
   <link name="link4">
@@ -96,22 +135,23 @@
       <geometry>
         <cylinder length="0.124" radius="0.028"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.062 0.028 0"/>
+      <origin rpy="0 0 0" xyz="0 0.028 0.062"/>
+      <material name="offWhite"/>
     </visual>
     <collision name="link4Collision">
       <geometry>
         <cylinder length="0.124" radius="0.028"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.062 0.028 0"/>
+      <origin rpy="0 0 0" xyz="0 0.028 0.062"/>
     </collision>
   </link>
   <!-- 4th joint -->
   <joint name="joint4" type="revolute">
     <parent link="link4"/>
     <child link="link5"/>
-    <limit effort="30" lower="-3.14159265359" upper="3.14159265359" velocity="1.0"/>
-    <axis xyz="1 0 0"/>
-    <origin rpy="0 0 0" xyz="0.124 0 0"/>
+    <limit effort="30" lower="-3.12413936107" upper="3.12413936107" velocity="1.0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 0" xyz="0 0 0.124"/>
   </joint>
   <!-- 5th link -->
   <link name="link5">
@@ -123,22 +163,23 @@
       <geometry>
         <cylinder length="0.167" radius="0.028"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.0835 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0835"/>
+      <material name="offWhite"/>
     </visual>
     <collision name="link5Collision">
       <geometry>
         <cylinder length="0.167" radius="0.028"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.0835 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0835"/>
     </collision>
   </link>
   <!-- 5th joint -->
   <joint name="joint5" type="revolute">
     <parent link="link5"/>
     <child link="link6"/>
-    <limit effort="30" lower="-2.77507351067" upper="0.191986217719" velocity="1.0"/>
+    <limit effort="30" lower="-2.70526034059" upper="0.174532925199" velocity="1.0"/>
     <axis xyz="0 1 0"/>
-    <origin rpy="0 0 0" xyz="0.167 0 0"/>
+    <origin rpy="0 0 0" xyz="0 0 0.167"/>
   </joint>
   <!-- 6th link -->
   <link name="link6">
@@ -150,19 +191,59 @@
       <geometry>
         <box size="0.056 0.056 0.104"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.052 0 0"/>
+      <origin rpy="0 0 0" xyz="0.056 0 0.056"/>
+      <material name="offWhite"/>
     </visual>
     <collision name="link6Collision">
       <geometry>
         <box size="0.056 0.056 0.104"/>
       </geometry>
-      <origin rpy="0 1.57079632679 0" xyz="0.052 0 0"/>
+      <origin rpy="0 0 0" xyz="0.056 0 0.056"/>
     </collision>
   </link>
+  <!-- 6th joint -->
+  <joint name="joint6" type="revolute">
+    <parent link="link6"/>
+    <child link="lamp"/>
+    <limit effort="30" lower="-3.12413936107" upper="3.12413936107" velocity="1.0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 0" xyz="0.056 0 0.104"/>
+  </joint>
   <!-- Lamp -->
-  <!--<material name="yellow"
-	<link name="lamp">
-		<xacro:boxGeometry name="lamp" l="${lamp_l}" d="${lamp_d}" w="${lamp_w}" XYZ=
-	-->
+  <link name="lamp">
+    <visual name="lampVisual">
+      <geometry>
+        <box size="0.066 0.066 0.065"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.0325"/>
+      <material name="black"/>
+    </visual>
+    <collision name="lampCollision">
+      <geometry>
+        <box size="0.066 0.066 0.065"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.0325"/>
+    </collision>
+  </link>
+  <!-- "bulb" -->
+  <link name="bulb">
+    <visual name="bulbVisual">
+      <geometry>
+        <cylinder length="0.01" radius="0.015"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.06"/>
+      <material name="yellow"/>
+    </visual>
+    <collision name="bulbCollision">
+      <geometry>
+        <cylinder length="0.01" radius="0.015"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.06"/>
+    </collision>
+  </link>
+  <joint name="bulbToLamp" type="fixed">
+    <parent link="lamp"/>
+    <child link="bulb"/>
+  </joint>
 </robot>
 

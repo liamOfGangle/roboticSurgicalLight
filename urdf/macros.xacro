@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro">
 	<!-- Box geometry macro -->
-	<xacro:macro name="boxGeometry" params="name l d w XYZ RPY">
+	<xacro:macro name="boxGeometry" params="name l d w XYZ RPY colour">
 		<visual name="${name}Visual">
 			<geometry>	
 				<box size="${d} ${w} ${l}"/>
 			</geometry>
 			<origin xyz="${XYZ}" rpy="${RPY}"/>
+			<material name="${colour}"/>
 		</visual>
 		<collision name="${name}Collision">
 			<geometry>
@@ -17,12 +18,13 @@
 	</xacro:macro>
 
 	<!-- Cylinder geometry macro -->
-	<xacro:macro name="cylinderGeometry" params="name l r XYZ RPY">
+	<xacro:macro name="cylinderGeometry" params="name l r XYZ RPY colour">
 		<visual name="${name}Visual">
 			<geometry>
 				<cylinder length="${l}" radius="${r}"/>
 			</geometry>
 			<origin xyz="${XYZ}" rpy="${RPY}"/>
+			<material name="${colour}"/>
 		</visual>
 		<collision name="${name}Collision">
 			<geometry>

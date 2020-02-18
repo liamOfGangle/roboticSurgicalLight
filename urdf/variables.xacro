@@ -34,4 +34,13 @@
 	<xacro:property name="lamp_l" value="0.065"/>
 	<xacro:property name="lamp_w" value="0.066"/>
 	<xacro:property name="lamp_d" value="0.066"/>
+	
+	<!-- "control box" variables -->
+	<xacro:property name="cb_l" value="0.078"/>
+	<xacro:property name="cb_d" value="0.075"/>
+	<xacro:property name="cb_w" value="0.110"/>
+	
+	<!-- "bulb" variables -->
+	<xacro:property name="bulb_l" value="0.010"/>
+	<xacro:property name="bulb_r" value="0.015"/>
 </robot>
