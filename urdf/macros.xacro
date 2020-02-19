@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+	<!-- Box geometry macro -->
+	<xacro:macro name="boxGeometry" params="name l d w xyz colour">
+		<visual name="${name}Visual">
+			<geometry>	
+				<box size="${d} ${w} ${l}"/>
+			</geometry>
+			<origin xyz="${xyz}" rpy="0 0 0"/>
+			<material name="${colour}"/>
+		</visual>
+		<collision name="${name}Collision">
+			<geometry>
+				<box size="${d} ${w} ${l}"/>
+			</geometry>
+			<origin xyz="${xyz}" rpy="0 0 0"/>
+		</collision>	
+	</xacro:macro>
+
+	<!-- Cylinder geometry macro -->
+	<xacro:macro name="cylinderGeometry" params="name l r xyz colour">
+		<visual name="${name}Visual">
+			<geometry>
+				<cylinder length="${l}" radius="${r}"/>
+			</geometry>
+			<origin xyz="${xyz}" rpy="0 0 0"/>
+			<material name="${colour}"/>
+		</visual>
+		<collision name="${name}Collision">
+			<geometry>
+				<cylinder length="${l}" radius="${r}"/>
+			</geometry>
+			<origin xyz="${xyz}" rpy="0 0 0"/>
+		</collision>
+	</xacro:macro>
+
+	<!-- Box inertial macro -->	
+	<xacro:macro name="boxInertial" params="m l d w">
+		<inertial>
+			<mass value="${m}"/>
+			<inertia ixx="${(1/12)*m*((l*l) + (d*d))}"
+					 iyy="${(1/12)*m*((w*w) + (d*d))}"
+					 izz="${(1/12)*m*((l*l) + (w*w))}"
+					 ixy="0" ixz="0" iyz="0"/>
+		</inertial>
+	</xacro:macro>
+
+	<!-- Cylinder inertial macro -->
+	<xacro:macro name="cylinderInertial" params="m l r">
+		<inertial>
+			<mass value="${m}"/>
+			<inertia ixx="${(1/12)*m*(3*(r*r) + (l*l))}"
+					 iyy="${(1/12)*m*(3*(r*r) + (l*l))}"
+					 izz="${(1/2)*m*r*r}"
+					 ixy="0" ixz="0" iyz="0"/>
+		</inertial>
+	</xacro:macro>
+	
+	<!-- Joint macro -->
+	<xacro:macro name="jRevolute" params="name parent child upper lower axis xyz">
+		<joint name="${name}" type="revolute">
+			<parent link="${parent}"/>
+			<child link="${child}"/>
+			<limit upper="${radians(upper)}" lower="${radians(lower)}" effort="30" velocity="1.0"/>
+			<axis xyz="${axis}"/>
+			<origin xyz="${xyz}" rpy="0 0 0"/>
+		</joint>
+	</xacro:macro>
+</robot>

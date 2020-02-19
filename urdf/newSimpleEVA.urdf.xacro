@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!-- Very simple representation of Automata's EVA robotic arm 
+	 Information within this urdf has been fond from Automata's documentation 
+	 This urdf only has visual/collision & joint blocks but macros for inertial exist
+-->
+
+<robot name="simpleEVA" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- Change below filename to correct package with your catkin_ws -->
+	<xacro:property name="pLocation" value="simple_eva_description"/>
+	<!-- Import variables -->
+	<xacro:include filename="$(find ${pLocation})/urdf/variables.xacro"/>
+	<!-- Import macros -->
+	<xacro:include filename="$(find ${pLocation})/urdf/macros.xacro"/>
+	<!-- Import materials/colours -->
+	<xacro:include filename="$(find ${pLocation})/urdf/materials.xacro"/>
+	
+	<!-- Base link -->
+	<link name="baseLink">
+		<xacro:boxGeometry name="baseLink"
+						   l="${l0_l}" d="${l0_d}" w="${l0_w}"
+						   xyz="0 0 ${l0_l/2}" 
+						   colour="offWhite"
+						   />
+	</link>
+	
+	<!-- 1st joint --> 
+	<!-- base link to link 1 -->
+	<xacro:jRevolute name="joint1" 
+					 parent="baseLink" child="link1"
+					 upper="179" lower="-179"
+					 axis="0 0 1" xyz="0 0 ${l0_l}"
+					 />
+	
+	<!-- link1 -->
+	<link name="link1">
+		<xacro:cylinderGeometry name="link1"
+								l="${l1_l}" r="${l1_r}"
+								xyz="0 0 ${l1_l/2}"
+								colour="offWhite"
+								/>								
+	</link>
+	
+	<!-- 2nd joint -->
+	<!-- link 1 to link 2 --> 
+	<xacro:jRevolute name="joint2"
+					 parent="link1" child="link2"
+					 upper="70" lower="-155"
+					 axis="0 1 0" xyz="${-jOff} 0 ${l1_l}"
+					 />
+	
+	<!-- link2 -->
+	<link name="link2">
+		<xacro:cylinderGeometry name="link2"
+								l="${l2_l}" r="${l2_r}"
+								xyz="0 0 ${l2_l/2}"
+								colour="offWhite"
+								/>
+	</link>
+	
+	<!-- 3rd joint -->
+	<!-- link 2 to link 3 -->
+	<xacro:jRevolute name="joint3"
+					 parent="link2" child="link3"
+					 upper="45" lower="-160"
+					 axis="0 1 0" xyz="0 0 ${l2_l}"
+					 />
+	
+	<!-- link3 -->
+	<link name="link3">
+		<xacro:cylinderGeometry name="link3"
+								l="${l3_l}" r="${l3_r}"
+								xyz="${jOff} 0 ${l3_l/2}"
+								colour="offWhite"
+								/>
+	</link>
+	
+	<!-- 4th joint -->
+	<!-- link 3 to link 4-->
+	<xacro:jRevolute name="joint4"
+					 parent="link3" child="link4"
+					 upper="179" lower="-179"
+					 axis="0 0 1" xyz="${jOff} 0 ${l3_l}"
+					 />
+	
+	<!-- link4 -->
+	<link name="link4">
+		<xacro:cylinderGeometry name="link4"
+								l="${l4_l}" r="${l4_r}"
+								xyz="0 0 ${l4_l/2}"
+								colour="offWhite"
+								/>
+	</link>
+	
+	<!-- 5th joint -->
+	<!-- link 4 to link 5 -->
+	<xacro:jRevolute name="joint5"
+					 parent="link4" child="link5"
+					 upper="10" lower="-155"
+					 axis="0 1 0" xyz="0 0 ${l4_l}"
+					 />
+	
+	<!-- link5 -->
+	<link name="link5">
+		<xacro:boxGeometry name="link5"
+						   l="${l5_l}" d="${l5_d}" w="${l5_w}"
+						   xyz="${l5Off} 0 ${l5_l/2}" 
+						   colour="offWhite"
+						   />
+	</link>
+	
+	<!-- 6th joint -->
+	<!-- link 5 to end effector -->
+	<xacro:jRevolute name="joint6"
+					 parent="link5" child="endEffector"
+					 upper="179" lower="-179"
+					 axis="0 0 1" xyz="${l5Off} 0 ${l5_l}"
+					 />
+	
+	<!-- end effector -->
+	<link name="endEffector">
+		<xacro:boxGeometry name="endEffector"
+						   l="${lamp_l}" d="${lamp_d}" w="${lamp_w}"
+						   xyz="0 0 ${lamp_l/2}" 
+						   colour="black"
+						   />
+	</link>
+</robot>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+	<!-- offWhite colour -->
+	<material name="offWhite">
+		<color rgba="${245/255} ${245/255} ${245/255} 1"/>
+	</material>
+	
+	<!-- Black colour -->
+	<material name="black">
+		<color rgba="${0/255} ${0/255} ${0/255} 1"/>
+	</material>
+	
+	<!-- Yellow colour -->
+	<material name="yellow">
+		<color rgba="${255/255} ${255/255} ${0/255} 1"/>
+	</material>
+	
+	<!-- darkGrey colour -->
+	<material name="darkGrey">
+		<color rgba="${169/255} ${169/255} ${169/255} 1"/>
+	</material>
+</robot>
+		
