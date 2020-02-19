@@ -4,31 +4,36 @@
 	<xacro:property name="m_total" value="9.5"/>
 	<xacro:property name="l_total" value="0.883"/>
 
+	<!-- joint offset -->
+	<xacro:property name="jOff" value="0.056"/>
+	
+	<!-- Base link variables -->
+	<xacro:property name="l0_l" value="0.187"/>
+	<xacro:property name="l0_w" value="0.125"/>
+	<xacro:property name="l0_d" value="0.125"/>
+
 	<!-- Link 1 variables -->
-	<xacro:property name="l1_l" value="0.187"/>
-	<xacro:property name="l1_w" value="0.112"/>
-	<xacro:property name="l1_d" value="0.112"/>
+	<xacro:property name="l1_l" value="0.096"/>
+	<xacro:property name="l1_r" value="0.04"/>
 
 	<!-- Link 2 variables -->
-	<xacro:property name="l2_l" value="0.096"/>
-	<xacro:property name="l2_r" value="0.028"/>
+	<xacro:property name="l2_l" value="0.205"/>
+	<xacro:property name="l2_r" value="0.04"/>
 
 	<!-- Link 3 variables -->
-	<xacro:property name="l3_l" value="0.205"/>
-	<xacro:property name="l3_r" value="0.028"/>
-
+	<xacro:property name="l3_l" value="0.124"/>
+	<xacro:property name="l3_r" value="0.04"/>
+	
 	<!-- Link 4 variables -->
-	<xacro:property name="l4_l" value="0.124"/>
-	<xacro:property name="l4_r" value="0.028"/>
+	<xacro:property name="l4_l" value="0.167"/>
+	<xacro:property name="l4_r" value="0.04"/>
 	
 	<!-- Link 5 variables -->
-	<xacro:property name="l5_l" value="0.167"/>
-	<xacro:property name="l5_r" value="0.056"/>
-	
-	<!-- Link 6 variables -->
-	<xacro:property name="l6_l" value="0.104"/>
-	<xacro:property name="l6_w" value="0.056"/>
-	<xacro:property name="l6_d" value="0.056"/>
+	<xacro:property name="l5_l" value="0.104"/>
+	<xacro:property name="l5_w" value="0.070"/>
+	<xacro:property name="l5_d" value="0.075"/>
+	<!-- measured from the arm -->
+	<xacro:property name="l5Off" value="0.064"/>
 	
 	<!-- Lamp variables -->
 	<xacro:property name="lamp_l" value="0.065"/>

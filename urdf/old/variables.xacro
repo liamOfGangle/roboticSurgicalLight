@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+	<!-- Totals -->
+	<xacro:property name="m_total" value="9.5"/>
+	<xacro:property name="l_total" value="0.883"/>
+
+	<!-- Link 1 variables -->
+	<xacro:property name="l1_l" value="0.187"/>
+	<xacro:property name="l1_w" value="0.112"/>
+	<xacro:property name="l1_d" value="0.112"/>
+
+	<!-- Link 2 variables -->
+	<xacro:property name="l2_l" value="0.096"/>
+	<xacro:property name="l2_r" value="0.028"/>
+
+	<!-- Link 3 variables -->
+	<xacro:property name="l3_l" value="0.205"/>
+	<xacro:property name="l3_r" value="0.028"/>
+
+	<!-- Link 4 variables -->
+	<xacro:property name="l4_l" value="0.124"/>
+	<xacro:property name="l4_r" value="0.028"/>
+	
+	<!-- Link 5 variables -->
+	<xacro:property name="l5_l" value="0.167"/>
+	<xacro:property name="l5_r" value="0.056"/>
+	
+	<!-- Link 6 variables -->
+	<xacro:property name="l6_l" value="0.104"/>
+	<xacro:property name="l6_w" value="0.056"/>
+	<xacro:property name="l6_d" value="0.056"/>
+	
+	<!-- Lamp variables -->
+	<xacro:property name="lamp_l" value="0.065"/>
+	<xacro:property name="lamp_w" value="0.066"/>
+	<xacro:property name="lamp_d" value="0.066"/>
+	
+	<!-- "control box" variables -->
+	<xacro:property name="cb_l" value="0.078"/>
+	<xacro:property name="cb_d" value="0.075"/>
+	<xacro:property name="cb_w" value="0.110"/>
+	
+	<!-- "bulb" variables -->
+	<xacro:property name="bulb_l" value="0.010"/>
+	<xacro:property name="bulb_r" value="0.015"/>
+</robot>

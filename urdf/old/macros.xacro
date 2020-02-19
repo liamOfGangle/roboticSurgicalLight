@@ -1,36 +1,36 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro">
 	<!-- Box geometry macro -->
-	<xacro:macro name="boxGeometry" params="name l d w xyz colour">
+	<xacro:macro name="boxGeometry" params="name l d w XYZ RPY colour">
 		<visual name="${name}Visual">
 			<geometry>	
 				<box size="${d} ${w} ${l}"/>
 			</geometry>
-			<origin xyz="${xyz}" rpy="0 0 0"/>
+			<origin xyz="${XYZ}" rpy="${RPY}"/>
 			<material name="${colour}"/>
 		</visual>
 		<collision name="${name}Collision">
 			<geometry>
 				<box size="${d} ${w} ${l}"/>
 			</geometry>
-			<origin xyz="${xyz}" rpy="0 0 0"/>
+			<origin xyz="${XYZ}" rpy="${RPY}"/>
 		</collision>	
 	</xacro:macro>
 
 	<!-- Cylinder geometry macro -->
-	<xacro:macro name="cylinderGeometry" params="name l r xyz colour">
+	<xacro:macro name="cylinderGeometry" params="name l r XYZ RPY colour">
 		<visual name="${name}Visual">
 			<geometry>
 				<cylinder length="${l}" radius="${r}"/>
 			</geometry>
-			<origin xyz="${xyz}" rpy="0 0 0"/>
+			<origin xyz="${XYZ}" rpy="${RPY}"/>
 			<material name="${colour}"/>
 		</visual>
 		<collision name="${name}Collision">
 			<geometry>
 				<cylinder length="${l}" radius="${r}"/>
 			</geometry>
-			<origin xyz="${xyz}" rpy="0 0 0"/>
+			<origin xyz="${XYZ}" rpy="${RPY}"/>
 		</collision>
 	</xacro:macro>
 
@@ -55,15 +55,9 @@
 					 ixy="0" ixz="0" iyz="0"/>
 		</inertial>
 	</xacro:macro>
-	
-	<!-- Joint macro -->
-	<xacro:macro name="jRevolute" params="name parent child upper lower axis xyz">
-		<joint name="${name}" type="revolute">
-			<parent link="${parent}"/>
-			<child link="${child}"/>
-			<limit upper="${radians(upper)}" lower="${radians(lower)}" effort="30" velocity="1.0"/>
-			<axis xyz="${axis}"/>
-			<origin xyz="${xyz}" rpy="0 0 0"/>
-		</joint>
+
+	<!-- Joint limits macro -->
+	<xacro:macro name="jointLimits" params="upper lower">
+		<limit upper="${radians(upper)}" lower="${radians(lower)}" effort="30" velocity="1.0"/>
 	</xacro:macro>
 </robot>
