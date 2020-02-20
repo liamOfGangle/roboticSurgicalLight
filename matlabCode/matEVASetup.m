@@ -2,7 +2,7 @@
 % Set up for RigidBodyTree, weights, homeConfig, zeroConfig and IK object 
 close all, clear all
 %% import urdf to make RigidBodyTree
-eva = importrobot('newSimpleEVA.urdf');
+eva = importrobot('C:\Users\ljtov\Documents\roboticSurgicalLight\urdf\newSimpleEVA.urdf');
 %% setup zeroConfig struct and homeConfig struct
 zeroConfig = homeConfiguration(eva);
 homeConfig = homeConfiguration(eva);
