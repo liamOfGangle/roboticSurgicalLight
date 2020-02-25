@@ -37,10 +37,7 @@ def angleLimitsCheck(jointAngles, inputUnit, jointHardLimits):
         print('inputUnit must be deg or rad')
 
     return jointAngles
-            
 
-
-    
 def loadLimitsFile(path):
     # Load in csv of joint limits. Joint limits found in documentation
     jointFile = [line.split(',') for line in open(path)]
@@ -50,3 +47,21 @@ def loadLimitsFile(path):
             jointFile[i][j] = float(jointFile[i][j])
     
     return jointFile
+
+def convert(self, x, ROUND=0):
+
+    conv = []
+
+    for _ in range(x.size[0]):
+        lst = x._data[_::x.size[0]].tolist()
+
+        if ROUND is not 0:
+            lst = [self.round_sig(elem, ROUND) if elem != 0 and
+                   elem == elem else elem for elem in lst]
+
+        conv.append(lst)
+
+    return conv
+
+def round_sig(self, x, sig=2):
+    return round(x, sig-int(math.floor(math.log10(abs(x))))-1)

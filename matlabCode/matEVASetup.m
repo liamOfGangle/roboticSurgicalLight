@@ -1,4 +1,3 @@
-%% 
 % Set up for RigidBodyTree, weights, homeConfig, zeroConfig and IK object 
 close all, clear all
 %% import urdf to make RigidBodyTree
