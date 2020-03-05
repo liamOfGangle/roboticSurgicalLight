@@ -9,7 +9,7 @@ def deg2rad(value):
     """ 
     Computationally quicker to use math lib on scalars and numpy lib on arrays
     """
-    if len(value) == 1:
+    if np.isscalar(value):
         value = math.radians(value)
     else:
         value = np.deg2rad(value)
