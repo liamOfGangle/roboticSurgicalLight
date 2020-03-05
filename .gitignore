@@ -4,3 +4,17 @@ matlabCode/CartMover6Soln.m
 .vscode/
 
 *.asv
+
+EvaPythonKey.txt
+
+pythonCode/oldMain.py
+
+pythonCode/functionTest.py
+
+pythonCode/__pycache__/
+
+matlabCode/test.m
+
+pythonCode/robotLib.py
+
+pythonCode/test.py
