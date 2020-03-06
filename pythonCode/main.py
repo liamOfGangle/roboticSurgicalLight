@@ -9,8 +9,6 @@ import numpy as np
 from evasdk import Eva
 import evaUtilities as utils
 
-
-
 """
 Setup
 """
@@ -19,10 +17,6 @@ eng.matEVASetup(nargout=0)         # Load variables into MATLAB workspace
 
 limitsPath = "C:\\Users\\ljtov\\Documents\\roboticSurgicalLight\\jointInfo\\jointLimitsEVA.csv"
 datasheetLimits = utils.loadLimits(limitsPath) # Load limits found in datasheet as a np array.
-
-homeAngles = np.array([0, 70, -160, 0, -90, 0], dtype=float) # Home angles
-homeAngles = utils.deg2rad(homeAngles)                       # Convert to radians
-homeAngles = utils.limitCheck(homeAngles, datasheetLimits)   # Check against datasheet 
 
 hostIP = "172.16.16.2"
 token = "d8b5bffcb19a1bbbe3da4772c143e364b54b42b2"
@@ -33,7 +27,7 @@ radius = 0.3
 # theta
 # phi
 
-focalPointCoordinates = np.array([-0.3, 0.3, 0])
+focalPointCoordinates = np.array([-0.3, 0.3, -0.05])
 
 """
 Main 
@@ -73,9 +67,3 @@ except KeyboardInterrupt:
         eva.control_wait_for_ready()
         eva.control_home()
     pass
-
-
-
-
-
-
