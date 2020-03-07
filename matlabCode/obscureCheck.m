@@ -17,4 +17,5 @@ function [discriminant] = obscureCheck(focalPointCoordinates, focalDistance, the
     else
         discriminant = 0;
     end
+end
 
