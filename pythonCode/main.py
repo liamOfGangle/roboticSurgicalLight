@@ -23,7 +23,7 @@ token = "d8b5bffcb19a1bbbe3da4772c143e364b54b42b2"
 
 eva = Eva(hostIP, token)
 
-radius = 0.3
+focalDistance = 0.3
 # theta
 # phi
 
@@ -47,7 +47,7 @@ try:
         phi = input("Enter an angle between -180 and 180 degrees: ")
         phi = utils.deg2rad(float(phi))
 
-        endEffPos = utils.endEffectorPosition(focalPointCoordinates, radius, theta, phi)
+        endEffPos = utils.endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
 
         currentAngles = eva.data_servo_positions()
 

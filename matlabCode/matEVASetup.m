@@ -2,10 +2,10 @@
 close all; clearvars;
 %% import urdf to make RigidBodyTree
 eva = importrobot('C:\Users\ljtov\Documents\roboticSurgicalLight\urdf\newSimpleEVA.urdf');
-%% setup zeroConfig struct and homeConfig struct
+%% setup zeroConfig struct
 zeroConfig = homeConfiguration(eva);
 %% weights
-weights = [1 1 1 0.8 0.8 0.8];
+weights = ones(1,6); % Pose and orientation equally important
 %% ik solver object
 ik = inverseKinematics('RigidBodyTree', eva);
 %% save workspace as .mat file

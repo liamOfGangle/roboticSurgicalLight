@@ -2,8 +2,6 @@ function [finalJointAngles] = evaIKSoln(eeCoordinates,theta,phi,initialJointAngl
 %evaIKSoln IK solver for Eva given coordinates and angles (in radians)
     %%
     load("C:\Users\ljtov\Documents\roboticSurgicalLight\eva.mat");
-    %%
-    ee = 'endEffector';
     %% Repopulate zeroConfig with current joint angles
     initialGuess = zeroConfig;
     for i = 1:length(initialGuess)
@@ -20,10 +18,7 @@ function [finalJointAngles] = evaIKSoln(eeCoordinates,theta,phi,initialJointAngl
     % Transformation homogeneous
     tform = tranTform*rotTform;    
     %% Calculate IK  
-    [configSoln,solnInfo]=ik(ee,tform,weights,initialGuess);
+    [configSoln,solnInfo]=ik('endEffector', tform, weights, initialGuess);
     %%
-    finalJointAngles = zeros(size(configSoln));
-    for i = 1:length(configSoln)
-        finalJointAngles(i) = configSoln(i).JointPosition;
-    end
+    finalJointAngles = [configSoln.JointPosition];
 end

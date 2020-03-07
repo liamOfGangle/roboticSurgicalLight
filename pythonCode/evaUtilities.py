@@ -45,6 +45,17 @@ def endEffectorPosition(focalPointCoordinates, radius, theta, phi):
     endEffectorCoordinates[2] = focalPointCoordinates[2] + radius*math.cos(theta)
     return endEffectorCoordinates
 
+def obscureCheck(focalPointCoordinates, focalDistance, theta, phi, obstacleRadius, obstacleCentreCoordinates):
+    """
+    Calculates if endEffector to focalPoint vector intersects a spherical object.
+    Uses formula found here - https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
+    """
+    originPoint = endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
+    unitVec = np.linalg.norm(focalPointCoordinates - originPoint)
 
+    discriminant = np.dot(unitVec,(originPoint - obstacleCentreCoordinates))**2 - ((np.linalg.norm(originPoint - obstacleCentreCoordinates)**2) - obstacleRadius**2) 
 
-     
+    if discriminant >= 0:
+        return True
+    else:
+        return False
