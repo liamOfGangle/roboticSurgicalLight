@@ -18,3 +18,9 @@ matlabCode/test.m
 pythonCode/robotLib.py
 
 pythonCode/test.py
+
+motiveStreaming/__pycache__/
+
+motiveStreaming/PythonClient.pyproj
+
+motiveStreaming/PythonClient.sln
