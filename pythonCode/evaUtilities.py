@@ -48,12 +48,10 @@ def endEffectorPosition(focalPointCoordinates, radius, theta, phi):
     """
     Calculates end effector position in cartesian space from spherical coordinates
     """
-    focalPointCoordinates = npArrayCheck(focalPointCoordinates)
-
-    endEffectorCoordinates = np.zeros(3)
-    endEffectorCoordinates[0] = focalPointCoordinates[0] + radius*math.sin(theta)*math.cos(phi)
-    endEffectorCoordinates[1] = focalPointCoordinates[1] + radius*math.sin(theta)*math.sin(phi)
-    endEffectorCoordinates[2] = focalPointCoordinates[2] + radius*math.cos(theta)
+    v11 = focalPointCoordinates[0] + radius*math.sin(theta)*math.cos(phi)
+    v12 = focalPointCoordinates[1] + radius*math.sin(theta)*math.sin(phi)
+    v13 = focalPointCoordinates[2]+ radius*math.cos(theta)
+    endEffectorCoordinates = np.array([v11, v12, v13])
     return endEffectorCoordinates
 
 def obscureCheck(focalPointCoordinates, focalDistance, theta, phi, obstacleRadius, obstacleCentreCoordinates):
@@ -61,8 +59,8 @@ def obscureCheck(focalPointCoordinates, focalDistance, theta, phi, obstacleRadiu
     Calculates if endEffector to focalPoint vector intersects a spherical object.
     Uses formula found here - https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
     """
-    focalPointCoordinates = npArrayCheck(focalPointCoordinates)
-    obstacleCentreCoordinates = npArrayCheck(obstacleCentreCoordinates)
+    # focalPointCoordinates = npArrayCheck(focalPointCoordinates)
+    # obstacleCentreCoordinates = npArrayCheck(obstacleCentreCoordinates)
 
     originPoint = endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
     unitVec = np.linalg.norm(focalPointCoordinates - originPoint)
