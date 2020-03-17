@@ -14,13 +14,13 @@
 
 # OptiTrack NatNet direct depacketization library for Python 3.x
 
+###
+# Adapted by Liam Overett 12/03/2020
+###
+
 import socket
 import struct
 from threading import Thread
-
-serverIP = "143.167.157.45"
-localIP = "143.167.158.31"
-multicast = "239.255.42.99"
 
 def trace( *args ):
     pass # print( "".join(map(str,args)) )
@@ -32,7 +32,7 @@ FloatValue = struct.Struct( '<f' )
 DoubleValue = struct.Struct( '<d' )
 
 class NatNetClient:
-    def __init__( self ):
+    def __init__( self, serverIP, localIP, multicastIP, numberOfRigidBodies ):
         # Change this value to the IP address of the NatNet server.
         self.serverIPAddress = serverIP
 
@@ -40,7 +40,7 @@ class NatNetClient:
         self.localIPAddress = localIP
 
         # This should match the multicast address listed in Motive's streaming settings.
-        self.multicastAddress = multicast
+        self.multicastAddress = multicastIP
 
         # NatNet Command channel
         self.commandPort = 1510
@@ -48,11 +48,19 @@ class NatNetClient:
         # NatNet Data channel     
         self.dataPort = 1511
 
-        # Set this to a callback method of your choice to receive per-rigid-body data at each frame.
+        # Set this to a callback method of your choice to receive per-rigid-body/frame data at each frame.
         self.rigidBodyListener = None
+        self.newFrameListener = None
         
         # NatNet stream version. This will be updated to the actual version the server is using during initialization.
         self.__natNetStreamVersion = (3,0,0,0)
+
+        # Number of rigid bodies
+        self.numberOfRigidBodies = numberOfRigidBodies
+
+        # Buffer containing all the data from rigid bodies 
+        self.buffer = [0] * numberOfRigidBodies
+
 
     # Client/server message ids
     NAT_PING                  = 0 
@@ -106,9 +114,22 @@ class NatNetClient:
         offset += 16
         trace( "\tOrientation:", rot[0],",", rot[1],",", rot[2],",", rot[3] )
 
-        # Send information to any listener.
+                
+        """
+        BIT I ADDED
+        """
+        # Create a buffer with all the data in which can then be called from main script
+        rigidBodyData = [id, pos, rot]
+        self.buffer.append(rigidBodyData)
+        if len(self.buffer) > self.numberOfRigidBodies:
+            del self.buffer[0]
+        """
+        BIT I ADDED END
+        """
+        
+        # # Send information to any listener.
         if self.rigidBodyListener is not None:
-            self.rigidBodyListener( id, pos, rot )
+            self.rigidBodyListener( id, pos, rot ) 
 
         # RB Marker Data ( Before version 3.0.  After Version 3.0 Marker data is in description )
         if( self.__natNetStreamVersion[0] < 3  and self.__natNetStreamVersion[0] != 0) :

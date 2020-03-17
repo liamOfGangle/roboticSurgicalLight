@@ -1,13 +1,15 @@
 # MATLAB library
 import matlab.engine 
-
 # Python math and numpy libraries
 import math
 import numpy as np
-
-# Eva SDK and utilities libraries
+# Naturalpoints adapted NatNet library
+from NatNetClient import NatNetClient
+# Eva SDK Utilities libraries
 from evasdk import Eva
-import evaUtilities as utils
+# Utilities libraries
+import evaUtilities as evaUtils
+import visionSystemUtilities as visUtils
 
 """
 Setup
@@ -16,23 +18,28 @@ eng = matlab.engine.start_matlab() # Start MATLAB engine
 eng.matEVASetup(nargout=0)         # Load variables into MATLAB workspace
 
 limitsPath = "C:\\Users\\ljtov\\Documents\\roboticSurgicalLight\\jointInfo\\jointLimitsEVA.csv"
-datasheetLimits = utils.loadLimits(limitsPath) # Load limits found in datasheet as a np array.
+datasheetLimits = evaUtils.loadLimits(limitsPath) # Load limits found in datasheet as a np array.
 
 hostIP = "172.16.16.2"
 token = "d8b5bffcb19a1bbbe3da4772c143e364b54b42b2"
+eva = Eva(hostIP, token) # EVA class 
 
-eva = Eva(hostIP, token)
+focalDistance = 1
+phi = evaUtils.deg2rad(0)
+theta = evaUtils.deg2rad(0)
 
-focalDistance = 0.3
-# theta
-# phi
+serverIP = "143.167.157.45"
+localIP = "143.167.158.31"
+multicastIP = "239.255.42.99"
+numberOfRigidBodies = 2
 
-focalPointCoordinates = np.array([-0.3, 0.3, -0.05])
+streamingClient = NatNetClient(serverIP, localIP, multicastIP, numberOfRigidBodies) # NatNet class
+streamingClient.run() # Run seperate thread receiving new data
 
 """
 Main 
 """
-waitInput = input("Press the enter key to continue.")
+waitInput = input("Press the enter key to move robot to home position.")
 
 # Move to home position
 with eva.lock():
@@ -41,29 +48,40 @@ with eva.lock():
 
 try:
     while True:
-        theta = input("Enter an angle between 0 and 90 degrees: ")
-        theta = utils.deg2rad(float(theta))
-
-        phi = input("Enter an angle between -180 and 180 degrees: ")
-        phi = utils.deg2rad(float(phi))
-
-        endEffPos = utils.endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
-
-        currentAngles = eva.data_servo_positions()
-
-        currentAngles = matlab.double(currentAngles)
-        endEffPos = matlab.double(endEffPos.tolist())
-
-        finalJointAngles = eng.evaIKSoln(endEffPos,theta,phi,currentAngles,nargout=1)
-
-        finalJointAngles = np.array(finalJointAngles._data).tolist()
-
+        waitInput = input("Press enter to move robot to focal point.")
         with eva.lock():
+
+            """
+            Initial test is to run once through
+            """
+            streamingData = streamingClient.buffer
+            robotRB = streamingClient.buffer[0]
+            focalPointRB = streamingClient.buffer[1]
+
+            focalPointCoordinates = np.array(list(focalPointRB[1]))
+            robotBaseCoordinates = np.array(list(robotRB[1]))
+            robotBaseQ = np.array(list(robotRB[2]))
+
+            focalPointCoordinates = visUtils.translatePoint(robotBaseCoordinates, focalPointCoordinates)
+            focalPointCoordinates = visUtils.rotatePoint(robotBaseQ, focalPointCoordinates)
+
+            focalPointCoordinates = np.squeeze(np.asarray(focalPointCoordinates))
+
+            endEffPos = evaUtils.endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
+
+            currentAngles = eva.data_servo_positions()
+
+            currentAngles = matlab.double(currentAngles)
+            endEffPos = matlab.double(endEffPos.tolist())
+
+            finalJointAngles = eng.evaIKSoln(endEffPos,theta,phi,currentAngles,nargout=1)
+
+            finalJointAngles = np.array(finalJointAngles._data).tolist()
+            finalJointAngles[5] = 0 
+
             eva.control_wait_for_ready()
             eva.control_go_to(finalJointAngles)
-
 except KeyboardInterrupt:
     with eva.lock():
         eva.control_wait_for_ready()
         eva.control_home()
-    pass
