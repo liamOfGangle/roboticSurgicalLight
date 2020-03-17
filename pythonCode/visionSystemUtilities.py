@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import operator
 from NatNetClient import NatNetClient
 
 """
@@ -28,7 +29,7 @@ def translatePoint(robotBaseCoordinates, rigidBodyCoordinate):
     return translatedRigidBodyCoordinates
      
     
-def rotatePoint(robotBaseQuaternion, rigidBodyCoordinate):
+def rotatePoint(rigidBodyCoordinate):
     """
     Rotate points from vision system coordinates to robot base coordinates
     """
@@ -51,7 +52,7 @@ def rotatePoint(robotBaseQuaternion, rigidBodyCoordinate):
     # m23 = 2*(q[2]*q[3] - q[0]*q[1])
     # # Third row
     # m31 = 2*(q[1]*q[3] - q[0]*q[2])
-    # m32 = 2*(q[2]*q[3] + q[0]*q[1])
+    # m32 = 2*(q[2]*q[3] + q[0]*q[1])   
     # m33 = q[0]**2 - q[1]**2 - q[2]**2 + q[3]**2
     # # Construct matrix
     # qMat = np.matrix([[m11, m12, m13],
@@ -68,3 +69,22 @@ def rotatePoint(robotBaseQuaternion, rigidBodyCoordinate):
 
     finalRotCoordinate = rotationMat@rigidBodyCoordinate
     return finalRotCoordinate
+
+def extractCoordinates(data):
+    """
+    Extracts coordinate data from Motive's datastream and puts them into a list.
+    That list is in the correct order e.g. base idx 0, focal idx 1 etc.
+    """
+    data = sorted(data, key=operator.itemgetter(0))
+    coordinateData = []
+    for i in range(len(data)):
+        coordinateData.append(np.asarray(data[i][1])) # Also converts to numpy array
+    return coordinateData
+
+def roundToMillimeter(data):
+    """
+    Don't need sub-milli accuracy so rounds data to nearest millimeter
+    """
+    data = np.around(data, decimals=3)
+    return data
+

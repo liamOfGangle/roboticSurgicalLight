@@ -1,8 +1,9 @@
 # MATLAB library
 import matlab.engine 
-# Python math and numpy libraries
+# Python libraries
 import math
 import numpy as np
+import time
 # Naturalpoints adapted NatNet library
 from NatNetClient import NatNetClient
 # Eva SDK Utilities libraries
@@ -28,10 +29,13 @@ focalDistance = 1
 phi = evaUtils.deg2rad(0)
 theta = evaUtils.deg2rad(0)
 
+handRadius = 0.1 # 10cm radius
+endEffRadius = 0.1 # 10cm radius
+
 serverIP = "143.167.157.45"
 localIP = "143.167.158.31"
 multicastIP = "239.255.42.99"
-numberOfRigidBodies = 2
+numberOfRigidBodies = 4
 
 streamingClient = NatNetClient(serverIP, localIP, multicastIP, numberOfRigidBodies) # NatNet class
 streamingClient.run() # Run seperate thread receiving new data
@@ -46,41 +50,63 @@ with eva.lock():
     eva.control_wait_for_ready()
     eva.control_home()
 
+streamingData = streamingClient.buffer
+
+"""
+For this test, only intersted in coordinates, not rotation data
+"""
+streamingData = visUtils.extractCoordinates(streamingData)
+oldStreamingData = streamingData.copy()
+
+oldStreamingData = visUtils.roundToMillimeter(oldStreamingData)
+
+# Move to focal point
+robotBaseCoordinates = oldStreamingData[0]
+focalPointCoordinates = oldStreamingData[1]
+
+focalPointCoordinates = visUtils.translatePoint(robotBaseCoordinates, focalPointCoordinates)
+focalPointCoordinates = visUtils.rotatePoint(focalPointCoordinates)
+
+focalPointCoordinates = np.squeeze(np.asarray(focalPointCoordinates))
+
+endEffPos = evaUtils.endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
+
+currentAngles = eva.data_servo_positions()
+
+currentAngles = matlab.double(currentAngles)
+endEffPos = matlab.double(endEffPos.tolist())
+
+finalJointAngles = eng.evaIKSoln(endEffPos,theta,phi,currentAngles,nargout=1)
+
+finalJointAngles = np.array(finalJointAngles._data).tolist()
+finalJointAngles[5] = 0 
+
+with eva.lock():
+    eva.control_wait_for_ready()
+    eva.control_go_to(finalJointAngles)
+
+"""
+Assuming focal point and robot base doesn't move for this test
+"""
+
 try:
     while True:
-        waitInput = input("Press enter to move robot to focal point.")
-        with eva.lock():
+        streamingData = streamingClient.buffer
+        streamingData = visUtils.extractCoordinates(streamingData)
 
-            """
-            Initial test is to run once through
-            """
-            streamingData = streamingClient.buffer
-            robotRB = streamingClient.buffer[0]
-            focalPointRB = streamingClient.buffer[1]
+        rightCoords = streamingData[2]
+        rightCoords = visUtils.roundToMillimeter(rightCoords)
+        
+        # Translate/rotate coordinates
+        rightCoords = visUtils.translatePoint(robotBaseCoordinates, rightCoords)
+        rightCoords = visUtils.rotatePoint(rightCoords)
 
-            focalPointCoordinates = np.array(list(focalPointRB[1]))
-            robotBaseCoordinates = np.array(list(robotRB[1]))
-            robotBaseQ = np.array(list(robotRB[2]))
+        if evaUtils.collisionCheck(rightCoords, endEffPos, handRadius, endEffRadius):
+            print("Collision")
+        else: print("No collision")
 
-            focalPointCoordinates = visUtils.translatePoint(robotBaseCoordinates, focalPointCoordinates)
-            focalPointCoordinates = visUtils.rotatePoint(robotBaseQ, focalPointCoordinates)
+        time.sleep(1)
 
-            focalPointCoordinates = np.squeeze(np.asarray(focalPointCoordinates))
-
-            endEffPos = evaUtils.endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
-
-            currentAngles = eva.data_servo_positions()
-
-            currentAngles = matlab.double(currentAngles)
-            endEffPos = matlab.double(endEffPos.tolist())
-
-            finalJointAngles = eng.evaIKSoln(endEffPos,theta,phi,currentAngles,nargout=1)
-
-            finalJointAngles = np.array(finalJointAngles._data).tolist()
-            finalJointAngles[5] = 0 
-
-            eva.control_wait_for_ready()
-            eva.control_go_to(finalJointAngles)
 except KeyboardInterrupt:
     with eva.lock():
         eva.control_wait_for_ready()

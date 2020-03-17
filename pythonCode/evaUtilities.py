@@ -71,4 +71,10 @@ def obscureCheck(focalPointCoordinates, focalDistance, theta, phi, obstacleRadiu
         return True
     else:
         return False
- 
+
+def collisionCheck(coords1, coords2, radius1, radius2):
+    dist = np.linalg.norm(coords1 - coords2)
+    print(dist)
+    if dist <= (radius1 + radius2):
+        return True
+    else: return False
