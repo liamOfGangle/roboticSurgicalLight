@@ -1,7 +1,6 @@
 import math
 import numpy as np
 import operator
-from NatNetClient import NatNetClient
 
 """
 Utilities library for use with vision systems (this case is Opitrack's Motive).
@@ -16,20 +15,18 @@ def npArrayCheck(listOrArray):
         listOrArray = np.array(listOrArray)
     return listOrArray
 
-def translatePoint(robotBaseCoordinates, rigidBodyCoordinate):
+def translatePoint(hkl, xyz):
     """
-    x' = x - h, y' = y - k, z' = z - l 	
+    x' = x - h, y' = y - k, z' = z - l
+    xyz are coordinates to be translated into same frame as hkl 	
     Translate points from vision system coordinates to robot base coordinates.
     Robot base is (0,0,0) for all calculations related to the robot. 
     """
-    # robotBaseCoordinates = npArrayCheck(robotBaseCoordinates)
-    # rigidBodyCoordinate = npArrayCheck(rigidBodyCoordinate)
-    
-    translatedRigidBodyCoordinates = rigidBodyCoordinate - robotBaseCoordinates
-    return translatedRigidBodyCoordinates
+    xyzPrime = xyz - hkl
+    return xyzPrime
      
     
-def rotatePoint(rigidBodyCoordinate):
+def rotatePoint(xyz):
     """
     Rotate points from vision system coordinates to robot base coordinates
     """
@@ -67,8 +64,8 @@ def rotatePoint(rigidBodyCoordinate):
     # rotationMat = rotX@qMat # Complete rotation matrix
     rotationMat = rotX 
 
-    finalRotCoordinate = rotationMat@rigidBodyCoordinate
-    return finalRotCoordinate
+    xyzPrime = rotationMat@xyz
+    return xyzPrime
 
 def extractCoordinates(data):
     """

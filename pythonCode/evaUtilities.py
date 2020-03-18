@@ -24,7 +24,10 @@ def deg2rad(value):
         value = np.deg2rad(value)
     return value
 
-def loadLimits(path):
+def loadLimits(path): # Probably not needed as can use evaSDK calc_pose_valid()
+    """
+    Loads limit file
+    """
     datasheetLimits = np.genfromtxt(path, delimiter=",", usecols=(1,2))
     datasheetLimits = deg2rad(datasheetLimits)
     return datasheetLimits
@@ -67,14 +70,15 @@ def obscureCheck(focalPointCoordinates, focalDistance, theta, phi, obstacleRadiu
 
     discriminant = np.dot(unitVec,(originPoint - obstacleCentreCoordinates))**2 - ((np.linalg.norm(originPoint - obstacleCentreCoordinates)**2) - obstacleRadius**2) 
 
-    if discriminant >= 0:
-        return True
-    else:
-        return False
-
-def collisionCheck(coords1, coords2, radius1, radius2):
-    dist = np.linalg.norm(coords1 - coords2)
-    print(dist)
-    if dist <= (radius1 + radius2):
-        return True
+    if discriminant >= 0: return True
     else: return False
+
+def collisionCheck(centre1, centre2, radius1, radius2):
+    """
+    Check if a spherical object intersects another spherical object
+    """
+    dist = np.linalg.norm(centre1 - centre2)
+    if dist <= (radius1 + radius2): return True
+    else: return False
+
+
