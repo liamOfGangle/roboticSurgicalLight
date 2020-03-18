@@ -59,7 +59,7 @@ class NatNetClient:
         self.numberOfRigidBodies = numberOfRigidBodies
 
         # Buffer containing all the data from rigid bodies 
-        self.buffer = [0] * numberOfRigidBodies
+        self.dataBuffer = [0] * numberOfRigidBodies
 
 
     # Client/server message ids
@@ -120,9 +120,9 @@ class NatNetClient:
         """
         # Create a buffer with all the data in which can then be called from main script
         rigidBodyData = [id, pos, rot]
-        self.buffer.append(rigidBodyData)
-        if len(self.buffer) > self.numberOfRigidBodies:
-            del self.buffer[0]
+        self.dataBuffer.append(rigidBodyData)
+        if len(self.dataBuffer) > self.numberOfRigidBodies:
+            del self.dataBuffer[0]
         """
         BIT I ADDED END
         """
