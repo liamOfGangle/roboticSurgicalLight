@@ -6,7 +6,7 @@ import math
 import numpy as np
 from numpy import linalg as la
 import operator
-
+import matlab.engine
 
 # General #
 ###########
@@ -30,16 +30,16 @@ def deg2rad(value):
         value = np.deg2rad(value)
     return value
 
-def obscureCheck(focalPointCoordinates, focalDistance, theta, phi, obstacleRadius, obstacleCentreCoordinates):
+def obscureCheck(fCoords, fDist, theta, phi, obstacleRadius, obstacleCentreCoordinates):
     """
     Calculates if endEffector to focalPoint vector intersects a spherical object.
     Uses formula found here - https://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
     """
-    # focalPointCoordinates = npArrayCheck(focalPointCoordinates)
+    # fCoords = npArrayCheck(fCoords)
     # obstacleCentreCoordinates = npArrayCheck(obstacleCentreCoordinates)
 
-    originPoint = endEffectorPosition(focalPointCoordinates, focalDistance, theta, phi)
-    unitVec = la.norm(focalPointCoordinates - originPoint)
+    originPoint = endEffectorPosition(fCoords, fDist, theta, phi)
+    unitVec = la.norm(fCoords - originPoint)
 
     discriminant = np.dot(unitVec,(originPoint - obstacleCentreCoordinates))**2 - ((la.norm(originPoint - obstacleCentreCoordinates)**2) - obstacleRadius**2) 
 
@@ -103,24 +103,24 @@ def limitCheck(jointAngles, datasheetLimits):
             jointAngles[i] = datasheetLimits[i][1] - offset
     return jointAngles
 
-def endEffectorPosition(focalPointCoordinates, radius, theta, phi):
+def endEffectorPosition(fCoords, radius, theta, phi):
     """
     Calculates end effector position in cartesian space from spherical coordinates
     """
-    v11 = focalPointCoordinates[0] + radius*math.sin(theta)*math.cos(phi)
-    v12 = focalPointCoordinates[1] + radius*math.sin(theta)*math.sin(phi)
-    v13 = focalPointCoordinates[2]+ radius*math.cos(theta)
-    endEffectorCoordinates = np.array([v11, v12, v13])
-    return endEffectorCoordinates
+    v11 = fCoords[0] + radius*math.sin(theta)*math.cos(phi)
+    v12 = fCoords[1] + radius*math.sin(theta)*math.sin(phi)
+    v13 = fCoords[2]+ radius*math.cos(theta)
+    eeCoords = np.array([v11, v12, v13])
+    return eeCoords
 
-def isInsideDextrousWorkspace(endEffCoords):
+def isInsideDextrousWorkspace(eeCoords):
     """
     Returns True if inside robot dextrous workspace, False if not
     """
     centre = np.array([0, 0, 0.187 + 0.096]) # Position of 2nd joint from base
     radius = 0.6 - 0.104 # Max distance between 2nd and 5th joint
     
-    if la.norm(endEffCoords - centre) > radius: return False
+    if la.norm(eeCoords - centre) > radius: return False
     else: return True
 
 def calcThetaPhi(eeCoords, fCentre, fRadius):
@@ -128,75 +128,93 @@ def calcThetaPhi(eeCoords, fCentre, fRadius):
     Calculates theta and phi
     """
     noTran = eeCoords - fCentre # Remove translation so sphere is centred on (0,0,0) to calculate phi and theta
-            
-    theta = math.acos(noTran(2)/fRadius) # theta = arccos(z/r), r = radius of sphere
-    phi = math.atan2(noTran(1), noTran(0)) # phi = arctan(y/x)
+    print(noTran)
+    
+    theta = math.acos(noTran[2]/fRadius) # theta = arccos(z/r), r = radius of sphere
+    phi = math.atan2(noTran[1], noTran[0]) # phi = arctan(y/x)
     
     return theta, phi
     
-
-def calcEndEff(focalCoords, focalRadius, endEffCoords=None):
+def calcEndEff(fCoords, fRadius):
     """
     Three cases when assuming end effector is directly above focal point at a distance 'r': 
         - End effector location is within dextrous sphere of robot.
         - End effector location is outside of dextrous sphere but focal sphere intersects.
         - End effector location is outside of dextrous sphere and focal sphere doesn't intersect.
     Function calculates end effector location and orientation so always pointed at focal point at distance 'r' away from it.
-    Function also calculates orientation of end effector if location already known.
     """
-    theta = phi = 0 # Intially start as zero
+    theta = phi = 0.0 # Intially start as zero
     
-    centre = np.array([0, 0, 0.187 + 0.096]) # Position of 2nd joint from base
-    radius = 0.6 - 0.104 # Max distance between 2nd and 5th joint
+    c1 = np.array([0, 0, 0.187 + 0.096]) # Position of 2nd joint from base
+    r1 = 0.6 - 0.104 # Max distance between 2nd and 5th joint
     
-    c1 = centre, c2 = focalCoords, r1 = radius, r2 = focalRadius
+    c2 = fCoords
+    r2 = fRadius
     # c1 = centre of workspace sphere, c2 = centre of focal sphere, r1 = radius of workspace, r2 = radius of focal space
     
     d = la.norm(c2 - c1)
     
-    if endEffCoords == None:
-        # Assume directly above 
-        endEffCoords = c2 + np.array([0, 0, r1])
+    # Assume directly above 
+    eeCoords = c2 + np.array([0, 0, r2])
+    
+    # Second case. Test if spheres intersect and test if end eff coords are outside of arm workspace
+    if d < (r1 + r2) and la.norm(eeCoords - c1) > r1:
+        rho = np.arange(360.0)
         
-        # Second case. Test if spheres intersect and test if end eff coords are outside of arm workspace
-        if d < (r1 + r2) and la.norm(endEffCoords - c1) > r1:
-            rho = np.arange(360.0)
-            
-            alpha = 0.5 + (r1**2 - r2**2)/2*d**2
-            
-            ci = c1 + alpha*(c2 - c1) # Centre of intersect circle
-            
-            ri = math.sqrt(r1**2 - (alpha*d)**2) # Radius of intersect circle
-            
-            normCC = ci/d # Normalised vector that runs perpendicular to intersect circle
-            
-            zu = -(normCC[0] - normCC[1])/normCC[2] # z value of tangent vector
-            U = np.array([1, 1, zu]) # Tangent vector U
-            normU = U/la.norm(U)
-            
-            V = np.cross(normCC, normU) # Bitangent vector
-            
-            zMax = -np.inf # Choose max z so angle between focal point and [0 0 1] will be minium 
-            for i in range(len(rho)):
-                interP = ci + ri*(normU*math.cos(rho[i]) + V*math.sin(rho[i])) # Interect point p(rho) on cicumference of intesect circle
-                if interP[2] > zMax: 
-                    zMax = interP[2]
-                    endEffCoords = interP
-            
-            theta, phi = calcThetaPhi(endEffCoords, c2, r2)
+        # alpha = 0.5 + A/B, A = (r1^2 - r2^2), B = 2*(d^2)
+        A = (math.pow(r1,2) - math.pow(r2,2))
+        B = 2*math.pow(d,2)
+        alpha = 0.5 + A/B
         
-        # Third case. Spheres just touch or do not touch
-        elif d >= (r1 + r2):
-            
-            if d > (r1 + r2):
-                r2 = d - r1
-                
-            endEffCoords = c1 + r1*(c2 - c1)
-            
-            theta, phi = calcThetaPhi(endEffCoords, c2, r2) 
+        ci = c1 + alpha*(c2 - c1) # Centre of intersect circle
         
-        return phi, theta, endEffCoords, r2
+        ri = math.sqrt(math.pow(r1,2) - math.pow((alpha*d),2)) # Radius of intersect circle
+
+        normCC = (c2 - c1)/d # Normalised vector that runs perpendicular to intersect circle
             
+        xu = (-normCC[2] - normCC[1])/normCC[0] # z value of tangent vector
+        U = np.array([xu, 1, 1]) # Tangent vector U
+        normU = U/la.norm(U)
+        
+        V = np.cross(normCC, normU) # Bitangent vector
+      
+        zMax = -np.inf # Choose max z so angle between focal point and [0 0 1] will be minium 
+        for i in range(len(rho)):
+            interP = ci + ri*(normU*math.cos(rho[i]) + V*math.sin(rho[i])) # Interect point p(rho) on cicumference of intesect circle
+            if interP[2] > zMax: 
+                zMax = interP[2]
+                eeCoords = interP
+        
+        theta, phi = calcThetaPhi(eeCoords, c2, r2)
+    
+    # Third case. Spheres just touch or do not touch
+    elif d >= (r1 + r2):
+        print("Third case")
+        
+        if d > (r1 + r2):
+            r2 = d - r1
+            
+        eeCoords = c1 + r1*(c2 - c1)
+        
+        theta, phi = calcThetaPhi(eeCoords, c2, r2) 
+    
+    return r2, theta, phi, eeCoords
+
+def calcJointAngles(theta, phi, eeCoords, currentAngles, matlabEngine, noRot=True):
+    coordinates = eeCoords.copy()
+    coordinates = matlab.double(coordinates.tolist())
+    
+    angles = currentAngles.copy()
+    angles = matlab.double(currentAngles)
+    
+    jointAngles = matlabEngine.evaIKSoln(coordinates, theta, phi, angles, nargout=1) # Use IK solver to get joint positions
+    jointAngles = np.array(jointAngles._data).tolist() # Convert from MATLAB data back to a list
+    
+    if noRot == True:
+        jointAngles[5] = 0 # Joint 6 does not need to rotate 
+    
+    return jointAngles
+          
 # Vision #
 ##########
 
