@@ -128,7 +128,6 @@ def calcThetaPhi(eeCoords, fCentre, fRadius):
     Calculates theta and phi
     """
     noTran = eeCoords - fCentre # Remove translation so sphere is centred on (0,0,0) to calculate phi and theta
-    print(noTran)
     
     theta = math.acos(noTran[2]/fRadius) # theta = arccos(z/r), r = radius of sphere
     phi = math.atan2(noTran[1], noTran[0]) # phi = arctan(y/x)

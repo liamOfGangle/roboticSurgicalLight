@@ -81,4 +81,3 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
         
     end                     
 end
-
