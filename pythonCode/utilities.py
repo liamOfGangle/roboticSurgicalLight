@@ -128,7 +128,6 @@ def calcThetaPhi(eeCoords, fCentre, fRadius):
     Calculates theta and phi
     """
     noTran = eeCoords - fCentre # Remove translation so sphere is centred on (0,0,0) to calculate phi and theta
-    print(noTran)
     
     theta = math.acos(noTran[2]/fRadius) # theta = arccos(z/r), r = radius of sphere
     phi = math.atan2(noTran[1], noTran[0]) # phi = arctan(y/x)
@@ -172,7 +171,7 @@ def calcEndEff(fCoords, fRadius):
 
         normCC = (c2 - c1)/d # Normalised vector that runs perpendicular to intersect circle
             
-        xu = (-normCC[2] - normCC[1])/normCC[0] # z value of tangent vector
+        xu = (-normCC[2] - normCC[1])/normCC[0] # x value of tangent vector
         U = np.array([xu, 1, 1]) # Tangent vector U
         normU = U/la.norm(U)
         
@@ -189,7 +188,6 @@ def calcEndEff(fCoords, fRadius):
     
     # Third case. Spheres just touch or do not touch
     elif d >= (r1 + r2):
-        print("Third case")
         
         if d > (r1 + r2):
             r2 = d - r1
