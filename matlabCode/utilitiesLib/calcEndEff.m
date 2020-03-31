@@ -21,27 +21,16 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
     % First case iff following statements aren't true
     
     % Second case
-    if d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot
-        rho = linspace(0, 359, 360);
-        rho = deg2rad(rho);
-        
+    if d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot        
         alpha = 0.5 + ((rRobot^2 - rFocal^2)/(2*(d^2)));
         
         ci = cRobot + alpha*(cFocal - cRobot); % Centre of intersect circle
         
         ri = sqrt(rRobot^2 - (alpha*d)^2); % Radius of intersect circle
         
-        [normCC, normU, V] = calcTangentBitangent(cRobot, cFocal);
-                
-        zMax = -inf; % Choose max z so angle between (ee - fc) & [0 0 1] is a minimum
+        [~, normU, V] = calcTangentBitangent(cRobot, cFocal);
         
-        for j = 1:length(rho)
-            P = ci + ri*(normU*cos(rho(j)) + V*sin(rho(j))); % Intersect point P(rho) on circumference of intersect circle
-            if P(3) > zMax
-                zMax = P(3);
-                eeCoords = P;
-            end
-        end
+        [~, eeCoords, ~] = calcTanBitanPointsAndVector(ci, normU, V, ri, 'zMax');
         
         [theta, phi] = calcThetaPhi(eeCoords, cFocal, rFocal); 
     
