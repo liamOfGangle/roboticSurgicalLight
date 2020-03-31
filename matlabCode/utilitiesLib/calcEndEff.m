@@ -27,36 +27,12 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
         
         alpha = 0.5 + ((rRobot^2 - rFocal^2)/(2*(d^2)));
         
-        ci = cRobot + alpha(cFocal - cRobot); % Centre of intersect circle
+        ci = cRobot + alpha*(cFocal - cRobot); % Centre of intersect circle
         
         ri = sqrt(rRobot^2 - (alpha*d)^2); % Radius of intersect circle
         
-        normCC = (cFocal - cRobot)/d; % Normalised vector that runs perpendicular to intersect circle
-        
-        xu = (-1.0*(normCC(3) + normCC(2)))/normCC(1); % x value of tangent
-        yu = (-1.0*(normCC(3) + normCC(1)))/normCC(2); % y value of tangent
-        zu = (-1.0*(normCC(2) + normCC(1)))/normCC(3); % z value of tangent
-        
-        U = [xu, 1, 1]; % Tangent vector U
-        normU = U/norm(U); % Normalised U vector
-        
-        if any(normU > 1.0)
-            U = [1, yu, 1];
-            normU = U/norm(U);
-            
-            if any(normU > 1.0)
-                U = [1, 1, zu];
-                normU = U/norm(U);
+        [normCC, normU, V] = calcTangentBitangent(cRobot, cFocal);
                 
-                if any(normU > 1.0)
-                    error("Element/s of normU are >1")
-                    return
-                end
-            end
-        end
-        
-        V = cross(normCC, normU); % Bitangent vector
-        
         zMax = -inf; % Choose max z so angle between (ee - fc) & [0 0 1] is a minimum
         
         for j = 1:length(rho)
@@ -80,4 +56,4 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
         [theta, phi] = calcThetaPhi(eeCoords, cFocal, rFocal);
         
     end                     
-end
+end 
