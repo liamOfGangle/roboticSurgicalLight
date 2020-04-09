@@ -39,7 +39,7 @@ phi = 0.0
 robotHomePose = [0, 0.5235, -1.7453, 0, -1.9198, 0]
 
 # Spherical object radii 
-handRadius = 0.1     # 10cm
+handRadius = 0.1 # 10cm
 eeRadius = 0.125 # 12.5cm
 
 # Length of predicted direction vector

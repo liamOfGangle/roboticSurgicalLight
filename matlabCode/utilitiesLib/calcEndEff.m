@@ -21,7 +21,7 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
     % First case iff following statements aren't true
     
     % Second case
-    if d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot        
+    if d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot
         alpha = 0.5 + ((rRobot^2 - rFocal^2)/(2*(d^2)));
         
         ci = cRobot + alpha*(cFocal - cRobot); % Centre of intersect circle
@@ -43,6 +43,5 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
         eeCoords = cRobot + rRobot*(cFocal - cRobot);
         
         [theta, phi] = calcThetaPhi(eeCoords, cFocal, rFocal);
-        
     end                     
 end 
