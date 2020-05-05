@@ -31,7 +31,9 @@ homeConfig = zeroConfig;
 for j = 1:length(hAngles)
     homeConfig(j).JointPosition = hAngles(j);
 end
-%% Sphere plots 
+%%
+
+%% Sphere plots
 % Spheres not intersecting 
 figure();
 
@@ -165,7 +167,11 @@ figure();
 show(eva,homeConfig);
 title('Model of EVA robotic arm in home configuration');
 xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+xlim auto
+ylim auto
+zlim auto
 %%
+figure();
 [rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
 [configSoln,fJA] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
 show(eva,configSoln);
@@ -178,4 +184,108 @@ p5 = plot3(sideSide(:,1), sideSide(:,2), sideSide(:,3),'LineWidth',1.5);
 p6 = plot3(topDown(:,1), topDown(:,2), topDown(:,3),'LineWidth',1.5);
 hold off;
 legend([p1,p2,p3,p4,p5,p6],{'1','2','3','4','5','6'})
+%%
+figure();
+show(eva,configSoln);
+hold on;
+p4 = plot3(obscure(:,1), obscure(:,2), obscure(:,3),'LineWidth',1.5);
+cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+hold off;
+legend([p4,cF],{'Hand movement','Focal point'},'location','northwest');
+xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+title('Data of a hand obstructing the focal point');
+xlim auto
+ylim auto
+zlim auto
+%% 
+figure();
+[rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
+[configSoln,fJA] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
+handRadius = 0.1;
+[X,Y,Z] = sphere();
+X = X*handRadius; Y = Y*handRadius; Z = Z*handRadius;
+
+CO(:,:,1) = zeros(length(X));
+CO(:,:,2) = zeros(length(X));
+CO(:,:,3) = ones(length(X));
+
+show(eva,configSoln);
+hold on; 
+focalVector = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+object = mesh(X+obscure(40000,1),Y+obscure(40000,2),Z+obscure(40000,3),CO);
+cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+hold off;
+legend([object,focalVector,cF],{'Hand object','Focal vector','Focal point'},'location','northwest');
+xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+title('Obstructing the focal point');
+xlim auto
+ylim auto
+zlim auto
+%%
+% figure();
+% d = norm(cFocal - cRobot); % Distance between centre of both spheres
+% eeCoords = cFocal + [0.0, 0.0, rFocal]; % Assume directly above
+% 
+% % First case 
+% if norm(eeCoords - cRobot) < rRobot
+%     rho = deg2rad(linspace(0,360,360+1));
+%     points = [];
+%     for j = 1:length(rho)
+%         pRho = cFocal + rFocal*([0,1,0]*cos(j)+[0,0,1]*sin(j));
+%         points = vertcat(points,pRho);
+%     end
+%     
+%     [r,~] = size(points);
+%     minTheta = inf;
+%     c = obscure(40000,:);
+%     for j = 1:r
+%         o = points(r,:);
+%         dHat = (cFocal - o)/norm(cFocal - o);
+%         discriminant = (dot(dHat,(o - c)))^2 - ((norm(o - c))^2 - rFocal^2);
+%         if discriminant >= 0
+%             [theta, phi] = calcThetaPhi(o, cFocal, rFocal);
+%             if theta < minTheta
+%                 minTheta = theta;
+%                 idx = j;
+%             end
+%         end
+%     end
+% 
+% % Second case
+% elseif d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot
+%     alpha = 0.5 + ((rRobot^2 - rFocal^2)/(2*(d^2)));
+% 
+%     ci = cRobot + alpha*(cFocal - cRobot); % Centre of intersect circle
+% 
+%     ri = sqrt(rRobot^2 - (alpha*d)^2); % Radius of intersect circle
+% 
+%     [~, normU, V] = calcTangentBitangent(cRobot, cFocal);
+% 
+%     [points, eeCoords, ~] = calcTanBitanPointsAndVector(ci, normU, V, ri, 'zMax');
+%     
+%     [r,~] = size(points);
+%     minTheta = inf;
+%     c = obscure(40000,:);
+%     for j = 1:r
+%         o = points(r,:);
+%         dHat = (cFocal - o)/norm(cFocal - o);
+%         discriminant = (dot(dHat,(o - c)))^2 - ((norm(o - c))^2 - rFocal^2);
+%         if discriminant >= 0
+%             [theta, phi] = calcThetaPhi(o, cFocal, rFocal);
+%             if theta < minTheta
+%                 minTheta = theta;
+%                 idx = j;
+%             end
+%         end
+%     end 
+% end
+% 
+% eeCoords = points(idx,:);
+% [theta, phi] = calcThetaPhi(idx,cFocal,rFocal);
+% 
+% [configSoln,~] = evaIKSolnMATLAB(eeCoords,theta,phi,hAngles);
+% 
+% show(eva,configSoln);
+
+
 

@@ -75,47 +75,44 @@ hold on;
 handSphere = mesh(X+handData(1,1),Y+handData(1,2),Z+handData(1,3),CO);
 focalVector = plot3([focalPointCoords(1) eeCoords(1)],[focalPointCoords(2) eeCoords(2)],[focalPointCoords(3) eeCoords(3)],'k','LineWidth',1.5);
 
-h = animatedline;
-
 for j = 2:rows
     k = j - 1;
-    currentPos = handData(j,:);
+    currPos = handData(j,:);
     prevPos = handData(k,:);
-    
-    [dirVec,predictedPos] = predictedPointAndDirectionVector(prevPos,currentPos);
-    
-    % Check to see if the distance between the end effector and the hand is
-    % <= the two object radii
-    distObjects = norm(eeCoords - predictedPos);
-    
-    % If distance is <= radii total, robot arm must move
-    if norm(distObjects) <= minDistBetween
-        % Test if hand is moving along x, y or z axes
-        closestAxis = dominantAxis(prevPos,currentPos,30);
-        
-        scalingFactor = norm(dirVec);
-        
+
+    [dirVec,predPos] = predictedPointAndDirectionVector(prevPos,currPos);
+
+    eeObjVec = eeCoords - predPos;
+    eeObjDist = norm(eeObjVec);
+
+    axisVec = [0 0 0];
+
+    if eeObjDist < minDistBetween
+
+        closestAxis = dominantAxis(prevPos,currPos,30);
+
         if strcmp("y axis",closestAxis) || strcmp("z axis",closestAxis)
-            % Add an x direction vector 
-            eeCoords = eeCoords + scalingFactor*[1 0 0];
+            scalingFactor = norm(dirVec);
+            axisVec = scalingFactor*[1 0 0];
         elseif strcmp("x axis",closestAxis)
-            % Add a y direction vector
-            eeCoords = eeCoords + scalingFactor*[0 1 0];
+            scalingFactor = norm(dirVec);
+            axisVec = scalingFactor*[0 1 0];
         end
         
-        eeCoords = eeCoords + dirVec; 
+        overLapDist = minDistBetween - eeObjDist;
+        overLapVec = (overLapDist/eeObjDist)*eeObjVec;
         
-        % Check to see if eeCoords are still within dextrous work space
-        endEffDist = norm(eeCoords - cRobot);
-        if endEffDist > rRobot
-            distToWorkspace = endEffDist - rRobot;
-            scalingFactor = distToWorkspace/endEffDist;
-            eeCoords = eeCoords + scalingFactor*(cRobot - eeCoords);
+        eeCoords = eeCoords + (axisVec + dirVec + overLapVec);
+        
+        inWorkspaceVec = cRobot - eeCoords;
+        inWorkspaceDist = norm(inWorkspaceVec);
+        if inWorkspaceDist > rRobot
+            distToWorkspace = inWorkspaceDist - rRobot;
+            eeCoords = eeCoords + (distToWorkspace/inWorkspaceDist)*inWorkspaceVec;
         end
-        handSphere = mesh(X+handData(j,1),Y+handData(j,2),Z+handData(j,3),CO);
+        
+        plot3(eeCoords(1),eeCoords(2),eeCoords(3),'o');                     
     end
-    
-    plot3(eeCoords(1),eeCoords(2),eeCoords(3),'o');
 end
 
 [rFocal, theta, phi, eeCoords] = calcEndEff(focalPointCoords, rFocal);

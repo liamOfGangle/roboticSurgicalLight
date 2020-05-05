@@ -5,8 +5,6 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
 %       - End effector location is outside of dextrous sphere but focal sphere intersects.
 %       - End effector location is outside of dextrous sphere and focal sphere doesn't intersect.
 %   Function calculates end effector location and orientation so always pointed at focal point at distance 'r' away from it.
- 
-    [theta, phi] = deal(0.0);
     
     cRobot = [0.0, 0.0, 0.187 + 0.096]; % Centre of workspace. From second joint
     rRobot = 0.6 - 0.104; % Radius of robot workspace
@@ -18,10 +16,12 @@ function [rFocal, theta, phi, eeCoords] = calcEndEff(fCoords, fRadius)
     
     eeCoords = cFocal + [0.0, 0.0, rFocal]; % Assume directly above
     
-    % First case iff following statements aren't true
+    % First case 
+    if norm(eeCoords - cRobot) < rRobot
+        [theta, phi] = deal(0.0);
     
     % Second case
-    if d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot
+    elseif d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot
         alpha = 0.5 + ((rRobot^2 - rFocal^2)/(2*(d^2)));
         
         ci = cRobot + alpha*(cFocal - cRobot); % Centre of intersect circle
