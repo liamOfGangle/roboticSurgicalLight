@@ -222,35 +222,39 @@ xlim auto
 ylim auto
 zlim auto
 %%
-% figure();
-% d = norm(cFocal - cRobot); % Distance between centre of both spheres
-% eeCoords = cFocal + [0.0, 0.0, rFocal]; % Assume directly above
-% 
-% % First case 
-% if norm(eeCoords - cRobot) < rRobot
-%     rho = deg2rad(linspace(0,360,360+1));
-%     points = [];
-%     for j = 1:length(rho)
-%         pRho = cFocal + rFocal*([0,1,0]*cos(j)+[0,0,1]*sin(j));
-%         points = vertcat(points,pRho);
-%     end
-%     
-%     [r,~] = size(points);
-%     minTheta = inf;
-%     c = obscure(40000,:);
-%     for j = 1:r
-%         o = points(r,:);
-%         dHat = (cFocal - o)/norm(cFocal - o);
-%         discriminant = (dot(dHat,(o - c)))^2 - ((norm(o - c))^2 - rFocal^2);
-%         if discriminant >= 0
-%             [theta, phi] = calcThetaPhi(o, cFocal, rFocal);
-%             if theta < minTheta
-%                 minTheta = theta;
-%                 idx = j;
-%             end
-%         end
-%     end
-% 
+figure();
+d = norm(cFocal - cRobot); % Distance between centre of both spheres
+eeCoords = cFocal + [0.0, 0.0, rFocal]; % Assume directly above
+
+% First case 
+if norm(eeCoords - cRobot) < rRobot
+    rho = deg2rad(linspace(0,360,360+1));
+    points = [];
+    for j = 1:length(rho)
+        pRho = cFocal + rFocal*([0,1,0]*cos(j)+[0,0,1]*sin(j));
+        points = vertcat(points,pRho);
+    end
+end
+% show(eva,configSoln);
+% hold on;
+% plot3(points(:,1), points(:,2), points(:,3),'x');
+    [r,~] = size(points);
+    minTheta = inf;
+    c = obscure(40000,:);
+    for j = 1:r
+        o = points(j,:);
+        dHat = (cFocal - o)/norm(cFocal - o);
+        discriminant = (dot(dHat,(o - c)))^2 - ((norm(o - c))^2 - rFocal^2);
+        if discriminant < 0
+            [theta, phi] = calcThetaPhi(o, cFocal, rFocal);
+            disp(rad2deg(theta));
+            if theta < minTheta
+                minTheta = theta;
+                idx = j;
+            end
+        end
+    end
+
 % % Second case
 % elseif d < (rRobot + rFocal) && norm(eeCoords - cRobot) > rRobot
 %     alpha = 0.5 + ((rRobot^2 - rFocal^2)/(2*(d^2)));
@@ -280,12 +284,12 @@ zlim auto
 %     end 
 % end
 % 
-% eeCoords = points(idx,:);
-% [theta, phi] = calcThetaPhi(idx,cFocal,rFocal);
-% 
-% [configSoln,~] = evaIKSolnMATLAB(eeCoords,theta,phi,hAngles);
-% 
-% show(eva,configSoln);
+eeCoords = points(idx,:);
+[theta, phi] = calcThetaPhi(idx,cFocal,rFocal);
+
+[configSoln,~] = evaIKSolnMATLAB(eeCoords,theta,phi,hAngles);
+
+show(eva,configSoln);
 
 
 
