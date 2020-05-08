@@ -1,80 +1,78 @@
 close all; clearvars;
-%% Load data
 load eva.mat;
+%%
+[theta, phi] = deal(0.0);
 
-movementType = 'topToBottom';
-
-switch movementType
-    case 'bottomToTop'
-        [handData, focalPointCoords, allTrackingData] = loadData('handBottomUp2.csv');
-    case 'topToBottom'
-        [handData, focalPointCoords, allTrackingData] = loadData('handTopDown3.csv');
-    case 'sideToSide'
-        [handData, focalPointCoords, allTrackingData] = loadData('handSideSide3.csv');
-    case 'directFromFront'
-        [handData, focalPointCoords, allTrackingData] = loadData('handFront3.csv');
-    case 'diagonalFromFront'
-        [handData, focalPointCoords, allTrackingData] = loadData('handDiagonalSide2.csv');
-    case 'obsureUnderneath'
-        [handData, focalPointCoords, allTrackingData] = loadData('handObscure2.csv');
-    otherwise
-        error('Not recognised movement cases');
-end
-%% Variables
 cRobot = [0.0, 0.0, 0.187 + 0.096];
 rRobot = 0.6 - 0.104;
 
+[bottUp, fCoordsBU, allBottUp] = loadData('handBottomUp2.csv');
+[diagFront, fCoordsDF, allDiagFront] = loadData('handDiagonalSide2.csv');
+[front, fCoordsF, allFront] = loadData('handFront3.csv');
+[obscure, fCoordsO, allObscure] = loadData('handObscure2.csv');
+[sideSide, fCoordsSS, allSS] = loadData('handSideSide3.csv');
+[topDown, fCoordsTD, allTopDown] = loadData('handTopDown3.csv');
+
+cFocal = mean(vertcat(fCoordsBU, fCoordsDF, fCoordsF, fCoordsO, fCoordsSS, fCoordsTD));
 rFocal = 1;
 
-homeAngles = [0, 0.5235, -1.7453, 0, -1.9198, 0]; % Pick and place home angles
-homeConfig = zeroConfig;
-for j = 1:length(homeAngles)
-    homeConfig(j).JointPosition = homeAngles(j);
-end
-
-handRadius = 0.1; 
-eeRadius = 0.125; 
-
+hAngles = [0, 0.5235, -1.7453, 0, -1.9198, 0]; % Pick and place home angles
+%%
+[rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
+[configSoln,currentAngles] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
+handRadius = 0.1;
 [X,Y,Z] = sphere();
 X = X*handRadius; Y = Y*handRadius; Z = Z*handRadius;
 
 CO(:,:,1) = zeros(length(X));
 CO(:,:,2) = zeros(length(X));
 CO(:,:,3) = ones(length(X));
-%% Figure to show hand movement data
-figure();
-
-% focalPointCoords = focalPointCoords + [-1 0 0];
-
-[rFocal, theta, phi, eeCoords] = calcEndEff(focalPointCoords, rFocal);
-[configSoln, ~] = evaIKSolnMATLAB(eeCoords, theta, phi, homeAngles);
-
-show(eva, configSoln); hold on;
-
-startData = plot3(handData(1,1),handData(1,2),handData(1,3),'b^','MarkerSize',10);
-endData = plot3(handData(end,1),handData(end,2),handData(end,3),'b*','MarkerSize',10);
-movementData = plot3(handData(:,1),handData(:,2),handData(:,3),'b','LineWidth',1.5);
-focalPosition = plot3(focalPointCoords(1),focalPointCoords(2),focalPointCoords(3),'kx','MarkerSize',10);
-focalVector = plot3([focalPointCoords(1) eeCoords(1)],[focalPointCoords(2) eeCoords(2)],[focalPointCoords(3) eeCoords(3)],'k','LineWidth',1.5);
-
-title('Movement data');
-xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
-legend([startData,endData,movementData,focalPosition,focalVector],{'Start of movement','End of movement','Movement path','Focal point','Focal vector'},'Location','northwest');
+% %%
+% figure();
+% show(eva,configSoln);
+% hold on;
+% object = mesh(X+sideSide(4500,1),Y+sideSide(4500,2),Z+sideSide(4500,3),CO);
+% focal = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+% cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+% title('Collision with an object');
+% legend([object,cF,focal],{'Hand object','Focal point','Focal vector'},'location','northwest');
+% xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+% xlim auto
+% ylim auto
+% zlim auto
+% %%
+% figure();
+% show(eva,configSoln);
+% hold on;
+% startData = plot3(sideSide(1,1),sideSide(1,2),sideSide(1,3),'b^','MarkerSize',10);
+% endData = plot3(sideSide(end,1),sideSide(end,2),sideSide(end,3),'b*','MarkerSize',10);
+% movementData = plot3(sideSide(:,1),sideSide(:,2),sideSide(:,3),'b','LineWidth',1.5);
+% focal = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+% cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+% title('Movement data of collision object');
+% xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+% legend([startData,endData,movementData,cF,focal],{'Start of movement','End of movement','Movement path','Focal point','Focal vector'},'Location','northwest');
+% xlim auto
+% ylim auto
+% zlim auto
 %% Collision avoidance
+handData = sideSide;
 [rows,cols] = size(handData);
 
-[rFocal,theta,phi,eeCoords] = calcEndEff(focalPointCoords,rFocal);
-[configSoln, configAngles] = evaIKSolnMATLAB(eeCoords, theta, phi, homeAngles);
+[rFocal,theta,phi,eeCoords] = calcEndEff(cFocal,rFocal);
+[configSoln, configAngles] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
 
-minDistBetween = handRadius + eeRadius;
+minDistBetween = handRadius + rRobot;
 
 figure();
 
 show(eva,configSoln);
 hold on;
-handSphere = mesh(X+handData(1,1),Y+handData(1,2),Z+handData(1,3),CO);
-focalVector = plot3([focalPointCoords(1) eeCoords(1)],[focalPointCoords(2) eeCoords(2)],[focalPointCoords(3) eeCoords(3)],'k','LineWidth',1.5);
+% handSphere = mesh(X+handData(1,1),Y+handData(1,2),Z+handData(1,3),CO);
+focalVector = plot3([cFocal(1) eeCoords(1)],[cFocal(2) eeCoords(2)],[cFocal(3) eeCoords(3)],'k','LineWidth',1.5);
 
+
+allEE = [];
 for j = 2:rows
     k = j - 1;
     currPos = handData(j,:);
@@ -111,9 +109,28 @@ for j = 2:rows
             eeCoords = eeCoords + (distToWorkspace/inWorkspaceDist)*inWorkspaceVec;
         end
         
-        plot3(eeCoords(1),eeCoords(2),eeCoords(3),'o');                     
+        allEE = vertcat(allEE,eeCoords);
+        
+%         plot3(eeCoords(1),eeCoords(2),eeCoords(3),'o');                     
     end
 end
 
-[rFocal, theta, phi, eeCoords] = calcEndEff(focalPointCoords, rFocal);
-[configSoln, ~] = evaIKSolnMATLAB(eeCoords, theta, phi, homeAngles);
+[rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
+[configSoln, ~] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
+
+handData = plot3(handData(:,1),handData(:,2),handData(:,3),'b','LineWidth',1.5);
+startData = plot3(sideSide(1,1),sideSide(1,2),sideSide(1,3),'b^','MarkerSize',10);
+endData = plot3(sideSide(end,1),sideSide(end,2),sideSide(end,3),'b*','MarkerSize',10);
+
+eeData = plot3(allEE(:,1),allEE(:,2),allEE(:,3),'Color','#EDB120','LineWidth',1.5);
+eeStart = plot3(allEE(1,1),allEE(1,2),allEE(1,3),'^','Color','#EDB120','MarkerSize',10);
+eeEnd = plot3(allEE(end,1),allEE(end,2),allEE(end,3),'*','Color','#EDB120','MarkerSize',10);
+
+cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+
+title('Avoiding collison');
+xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+legend([startData,endData,handData,eeStart,eeEnd,eeData,cF,focalVector],{'Start of movement','End of movement','Movement path','Start of robot movement','End of robot movement','Robot movement','Focal point','Focal vector'},'Location','northwest');
+xlim auto
+ylim auto
+zlim auto
