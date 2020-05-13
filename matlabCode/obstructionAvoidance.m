@@ -80,7 +80,124 @@ for j = 1:rows
         show(eva,configSoln);
     end
 end
-            
+%% Results plots
+[rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
+[configSoln,currentAngles] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
+
+for j = 1:rows
+    discriminant = lineSphereDiscriminant(eeCoords,cFocal,obscure(j,:),handRadius);
+    if discriminant >= 0
+        minTheta = inf;
+        
+        for k = 1:r
+            discriminant = lineSphereDiscriminant(possiblePoints(k,:),cFocal,obscure(j,:),handRadius);
+            if discriminant < 0
+                [theta,~] = calcThetaPhi(possiblePoints(k,:),cFocal,rFocal);
+
+                if theta < minTheta
+                    minTheta = theta;
+                    idx = k;
+                end
+            end
+        end
+        
+        figure();
+        show(eva,configSoln);
+        hold on;
+        focalVector = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+        object = mesh(X+obscure(j,1),Y+obscure(j,2),Z+obscure(j,3),CO);
+        cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+        handData = plot3(obscure(:,1), obscure(:,2), obscure(:,3),'b','LineWidth',1.5);
+        startData = plot3(obscure(1,1),obscure(1,2),obscure(1,3),'b^','MarkerSize',10);
+        endData = plot3(obscure(end,1),obscure(end,2),obscure(end,3),'b*','MarkerSize',10);
+        legend([startData,endData,handData,object,cF,focalVector],{'Start of object movement','End of object movement','Object movement path','object','Focal point','Focal vector'},'Location','northwest');
+        xlim auto
+        ylim auto
+        zlim auto
+        view(-135,25);
+        
+        eeCoords = possiblePoints(idx,:);
+        [theta,phi] = calcThetaPhi(eeCoords,cFocal,rFocal);
+        [configSoln,currentAngles] = evaIKSolnMATLAB(eeCoords,theta,phi,currentAngles);
+        
+        figure();
+        show(eva,configSoln);
+        hold on;
+        focalVector = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+        object = mesh(X+obscure(j,1),Y+obscure(j,2),Z+obscure(j,3),CO);
+        cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+        handData = plot3(obscure(:,1), obscure(:,2), obscure(:,3),'b','LineWidth',1.5);
+        startData = plot3(obscure(1,1),obscure(1,2),obscure(1,3),'b^','MarkerSize',10);
+        endData = plot3(obscure(end,1),obscure(end,2),obscure(end,3),'b*','MarkerSize',10);
+        legend([startData,endData,handData,object,cF,focalVector],{'Start of object movement','End of object movement','Object movement path','object','Focal point','Focal vector'},'Location','northwest');
+        xlim auto
+        ylim auto
+        zlim auto
+        view(-135,25);
+    end
+end
+
+[rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
+[configSoln,currentAngles] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
+sideSide = sideSide + [0, 0, -0.5];
+[rows,~] = size(sideSide);
+
+
+for j = 1:rows
+    discriminant = lineSphereDiscriminant(eeCoords,cFocal,sideSide(j,:),handRadius);
+    if discriminant >= 0
+        minTheta = inf;
+        
+        for k = 1:r
+            discriminant = lineSphereDiscriminant(possiblePoints(k,:),cFocal,sideSide(j,:),handRadius);
+            if discriminant < 0
+                [theta,~] = calcThetaPhi(possiblePoints(k,:),cFocal,rFocal);
+
+                if theta < minTheta
+                    minTheta = theta;
+                    idx = k;
+                end
+            end
+        end
+        
+        figure();
+        show(eva,configSoln);
+        hold on;
+        focalVector = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+        object = mesh(X+sideSide(j,1),Y+sideSide(j,2),Z+sideSide(j,3),CO);
+        cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+%         plot3(sideSide(:,1), sideSide(:,2), sideSide(:,3),'LineWidth',1.5);
+        handData = plot3(sideSide(:,1),sideSide(:,2),sideSide(:,3),'b','LineWidth',1.5);
+        startData = plot3(sideSide(1,1),sideSide(1,2),sideSide(1,3),'b^','MarkerSize',10);
+        endData = plot3(sideSide(end,1),sideSide(end,2),sideSide(end,3),'b*','MarkerSize',10);
+        xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
+        legend([startData,endData,handData,object,cF,focalVector],{'Start of object movement','End of object movement','Object movement path','object','Focal point','Focal vector'},'Location','northwest');
+        xlim auto
+        ylim auto
+        zlim auto
+        view(-90,25);
+        
+        eeCoords = possiblePoints(idx,:);
+        [theta,phi] = calcThetaPhi(eeCoords,cFocal,rFocal);
+        [configSoln,currentAngles] = evaIKSolnMATLAB(eeCoords,theta,phi,currentAngles);
+        
+        figure();
+        show(eva,configSoln);
+        hold on;
+        focalVector = plot3([eeCoords(1) cFocal(1)],[eeCoords(2) cFocal(2)],[eeCoords(3) cFocal(3)],'k','LineWidth',1.5);
+        object = mesh(X+sideSide(j,1),Y+sideSide(j,2),Z+sideSide(j,3),CO);
+        cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerSize',10);
+        handData = plot3(sideSide(:,1),sideSide(:,2),sideSide(:,3),'b','LineWidth',1.5);
+        startData = plot3(sideSide(1,1),sideSide(1,2),sideSide(1,3),'b^','MarkerSize',10);
+        endData = plot3(sideSide(end,1),sideSide(end,2),sideSide(end,3),'b*','MarkerSize',10);
+        legend([startData,endData,handData,object,cF,focalVector],{'Start of object movement','End of object movement','Object movement path','object','Focal point','Focal vector'},'Location','northwest');
+        xlim auto
+        ylim auto
+        zlim auto
+        view(-90,25);
+    end
+end
+
 % plot3(allEE(:,1), allEE(:,2), allEE(:,3), 'x');
 
 % %%

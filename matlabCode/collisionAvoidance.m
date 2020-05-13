@@ -56,7 +56,7 @@ CO(:,:,3) = ones(length(X));
 % ylim auto
 % zlim auto
 %% Collision avoidance
-handData = sideSide;
+handData = diagFront;
 [rows,cols] = size(handData);
 
 [rFocal,theta,phi,eeCoords] = calcEndEff(cFocal,rFocal);
@@ -115,12 +115,24 @@ for j = 2:rows
     end
 end
 
-[rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
-[configSoln, ~] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
+% [rFocal, theta, phi, eeCoords] = calcEndEff(cFocal, rFocal);
+% [configSoln, ~] = evaIKSolnMATLAB(eeCoords, theta, phi, hAngles);
 
-handData = plot3(handData(:,1),handData(:,2),handData(:,3),'b','LineWidth',1.5);
-startData = plot3(sideSide(1,1),sideSide(1,2),sideSide(1,3),'b^','MarkerSize',10);
-endData = plot3(sideSide(end,1),sideSide(end,2),sideSide(end,3),'b*','MarkerSize',10);
+[rows,~] = size(allEE);
+for j = 1:rows
+    
+%     if mod(j,6) == 0 || j == 1
+    
+        [theta,phi] = calcThetaPhi(allEE(j,:),cFocal,rFocal);
+        [configSoln, configAngles] = evaIKSolnMATLAB(allEE(j,:), theta, phi, configAngles);
+        show(eva,configSoln);
+        focalVector = plot3([cFocal(1) allEE(j,1)],[cFocal(2) allEE(j,2)],[cFocal(3) allEE(j,3)],'k','LineWidth',1.5);
+%     end
+end 
+
+dataHand = plot3(handData(:,1),handData(:,2),handData(:,3),'b','LineWidth',1.5);
+startData = plot3(handData(1,1),handData(1,2),handData(1,3),'b^','MarkerSize',10);
+endData = plot3(handData(end,1),handData(end,2),handData(end,3),'b*','MarkerSize',10);
 
 eeData = plot3(allEE(:,1),allEE(:,2),allEE(:,3),'Color','#EDB120','LineWidth',1.5);
 eeStart = plot3(allEE(1,1),allEE(1,2),allEE(1,3),'^','Color','#EDB120','MarkerSize',10);
@@ -130,7 +142,7 @@ cF = plot3(cFocal(1),cFocal(2),cFocal(3),'x','Color',[0.85 0.325 0.098],'MarkerS
 
 title('Avoiding collison');
 xlabel('x /meters'); ylabel('y /meters'); zlabel('z /meters');
-legend([startData,endData,handData,eeStart,eeEnd,eeData,cF,focalVector],{'Start of movement','End of movement','Movement path','Start of robot movement','End of robot movement','Robot movement','Focal point','Focal vector'},'Location','northwest');
+legend([startData,endData,dataHand,eeStart,eeEnd,eeData,cF,focalVector],{'Start of movement','End of movement','Movement path','Start of robot movement','End of robot movement','Robot movement','Focal point','Focal vector'},'Location','northwest');
 xlim auto
 ylim auto
 zlim auto
